@@ -30,16 +30,13 @@ $routes->post('/directory/lgus/store', 'LguController::lguStore');
 $routes->get('/directory/sucs', 'DirectoryController::suc');
 $routes->get('/directory/business_sector', 'NgoController::businessSector');
 $routes->post('/directory/business_sector/store', 'NgoController::businessSectorStore');
-
-
-// $routes->get('/directory/balik_scientist', 'DirectoryController::balik_scientist');
 $routes->get('/directory/wide_contacts', 'WideContactController::wideContacts');
 
 
 // INSTITUTION //
 $routes->get('/institution/home', 'InstitutionController::index');
-$routes->get('/institution/balik_scientist', 'InstitutionController::balik_scientist');
-$routes->get('/institution/consortium', 'InstitutionController::consortium');
-$routes->get('/institution/ncrp_members', 'InstitutionController::ncrp_members');
-$routes->get('/institution/projects', 'InstitutionController::projects');
-$routes->get('/institution/research_centers', 'InstitutionController::research_centers');
+$routes->get('/institution/balik_scientist', 'BalikScientistController::balik_scientist');
+$routes->get('/institution/consortium', 'ConsortiumController::consortium');
+$routes->get('/institution/ncrp_members', 'NcrpController::ncrp_members');
+$routes->get('/institution/projects', 'ProjectsController::projects');
+$routes->get('/institution/research_centers', 'ResearchCentersController::research_centers');

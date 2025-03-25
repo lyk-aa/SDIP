@@ -24,24 +24,24 @@ class InstitutionController extends BaseController
         return view('/institution/home', compact('stakeholders'));
     }
 
-    public function balik_scientist()
-    {
-        return view('/institution/balik_scientist/index');
-    }
-    public function consortium()
-    {
-        return view('/institution/consortium/index');
-    }
-    public function ncrp_members()
-    {
-        return view('/institution/ncrp_members/index');
-    }
-    public function projects()
-    {
-        return view('/institution/projects/index');
-    }
-    public function research_centers()
-    {
-        return view('/institution/research_centers/index');
-    }
+    // public function balik_scientist()
+    // {
+    //     return view('/institution/balik_scientist/index');
+    // }
+    // public function consortium()
+    // {
+    //     return view('/institution/consortium/index');
+    // }
+    // public function ncrp_members()
+    // {
+    //     return view('/institution/ncrp_members/index');
+    // }
+    // public function projects()
+    // {
+    //     return view('/institution/projects/index');
+    // }
+    // public function research_centers()
+    // {
+    //     return view('/institution/research_centers/index');
+    // }
 }
