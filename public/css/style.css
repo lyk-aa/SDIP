@@ -1,0 +1,75 @@
+.card {
+    position: relative;
+}
+
+
+.kebab-menu {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+
+.image-upload {
+    position: relative;
+    cursor: pointer;
+}
+
+
+.image-upload input[type="file"] {
+    display: none;
+}
+
+
+.image-upload-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border: 2px dashed #ccc;
+    height: 150px;
+    position: relative;
+}
+
+
+.plus-icon {
+    position: absolute;
+    color: #aaa;
+    font-size: 3rem;
+    pointer-events: none;
+    top: 50%;
+    /* Vertically centered */
+    left: 50%;
+    /* Horizontally centered */
+    transform: translate(-50%, -50%);
+    /* Adjusts the element to be perfectly centered */
+}
+
+
+.modal-image-preview {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 150px;
+    object-fit: contain;
+    margin-bottom: 5px;
+    /* Reduce space below the image */
+}
+
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    /* Adjust padding */
+}
+
+
+#file-input {
+    margin-top: 0;
+    /* Ensure no extra space above the file input */
+    padding-top: 0;
+    /* Remove unnecessary padding */
+}
