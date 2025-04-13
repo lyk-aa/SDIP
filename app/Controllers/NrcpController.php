@@ -110,7 +110,7 @@ class NrcpController extends BaseController
             }
         }
 
-        return redirect()->to('/institution/nrcp_members/index')->with('success', 'Scientist added successfully!');
+        return redirect()->to('/institution/nrcp_members/index')->with('success', 'NRCP Member added successfully!');
     }
 
     public function delete($id)

@@ -75,13 +75,13 @@ class ConsortiumController extends BaseController
         $db = \Config\Database::connect();
 
         $consortium = $db->table('consortiums cons')
-        ->select('cons.id, cons.name, cm.institution_id')
-        ->join('consortium_members cm', 'cm.consortium_id = cons.id', 'left')
-        ->where('cons.id', $id)
-        ->get()
-        ->getRow();
+            ->select('cons.id, cons.name, cm.institution_id')
+            ->join('consortium_members cm', 'cm.consortium_id = cons.id', 'left')
+            ->where('cons.id', $id)
+            ->get()
+            ->getRow();
 
-        if(!$consortium) {
+        if (!$consortium) {
             return redirect()->to('/institution/consortium/index')->with('error', 'Consortium not found!');
         }
 
@@ -135,4 +135,32 @@ class ConsortiumController extends BaseController
         return redirect()->to('/institution/consortium/index')->with('success', 'Consortium deleted successfully!');
     }
 
+    public function search()
+    {
+        $searchTerm = $this->request->getVar('query');
+
+        // Use the search term to filter consortiums
+        $db = \Config\Database::connect();
+        $builder = $db->table('consortium_members cm');
+        $builder->select('
+        cm.id, 
+        c.id as consortium_id,
+        c.name as consortium_name, 
+        i.id as institution_id, 
+        s.name as institution_name
+    ');
+        $builder->join('consortiums c', 'c.id = cm.consortium_id', 'left');
+        $builder->join('institutions i', 'i.id = cm.institution_id', 'left');
+        $builder->join('stakeholders s', 's.id = i.stakeholder_id', 'left');
+
+        // Apply search filter on consortium name and institution name
+        $builder->like('c.name', $searchTerm);
+        $builder->orLike('s.name', $searchTerm);
+
+        // Fetch results
+        $consortiums = $builder->get()->getResult();
+
+        // Return the results as JSON
+        return $this->response->setJSON($consortiums);
+    }
 }

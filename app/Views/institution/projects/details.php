@@ -2,24 +2,32 @@
 
 <?= $this->section('content') ?>
 
-<div class="container">
-    <h1>Project Details</h1>
+<style>
+    .title {
+        font-size: 2.2rem;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+</style>
 
-    <!-- Display error message if project not found -->
+<div class="container">
     <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger">
+        <div class="notification is-danger">
             <?= session()->getFlashdata('error') ?>
         </div>
     <?php endif; ?>
 
     <?php if ($project): ?>
         <div class="card">
-            <div class="card-body">
-                <table class="table table-bordered">
+            <div class="card-content">
+                <div class="title has-text-centered">
+                    <h1>Research Project</h1>
+                </div>
+                <table class="table is-bordered is-striped is-fullwidth">
                     <thead>
                         <tr>
-                            <th>Field</th>
-                            <th>Details</th>
+                            <th class="is-half">Field</th>
+                            <th class="is-half">Details</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -29,7 +37,9 @@
                         </tr>
                         <tr>
                             <td><strong>Status</strong></td>
-                            <td><?= esc($project['status']) ?></td>
+                            <td><span
+                                    class="tag is-medium <?= getStatusClass($project['status']) ?>"><?= esc($project['status']) ?></span>
+                            </td>
                         </tr>
                         <tr>
                             <td><strong>Description</strong></td>
@@ -69,12 +79,36 @@
                     </tbody>
                 </table>
 
-                <hr>
+                <!-- Back Button aligned to the right -->
+                <!-- Back Button aligned to the right with icon gap -->
+                <div class="has-text-right" style="margin-top: 20px;">
+                    <a href="<?= site_url('/institution/projects/index') ?>" class="button is-link is-small">
+                        <span class="icon mr-1"><i class="fas fa-arrow-left"></i></span>
+                        <span>Back to Projects</span>
+                    </a>
+                </div>
 
-                <a href="<?= site_url('/institution/projects/index') ?>" class="btn btn-secondary">Back to Projects</a>
+
             </div>
         </div>
     <?php endif; ?>
 </div>
 
 <?= $this->endSection() ?>
+
+<?php
+// Helper function to assign a class based on status
+function getStatusClass($status)
+{
+    switch (strtolower(trim($status))) {
+        case 'completed':
+            return 'is-success';
+        case 'pending':
+            return 'is-warning';
+        case 'ongoing':
+            return 'is-info';
+        default:
+            return '';
+    }
+}
+?>

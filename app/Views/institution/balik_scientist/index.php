@@ -2,283 +2,192 @@
 <?= $this->section('content') ?>
 
 <style>
-    .buttons-container {
+    .card-flip {
+        perspective: 1000px;
+    }
+
+    .card {
+        height: 300px;
+        /* Set a fixed height for consistency */
+        position: relative;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .flip-inner {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+    }
+
+    .flip-inner.is-flipped {
+        transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        top: 0;
+        left: 0;
+        padding: 1rem;
         display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        margin-bottom: 10px;
-        margin-top: -10px;
-    }
-
-    .title {
-        font-size: 2.2rem;
-        margin-top: 10px;
-        margin-bottom: 1px;
-    }
-
-    .box {
-        margin-top: 30px;
-    }
-
-    h2 {
-        text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-        text-transform: uppercase;
-        margin-top: 10px;
-    }
-
-    .carousel {
-        display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 90%;
-        max-width: 900px;
-        overflow: hidden;
-        position: relative;
-        margin: 0 auto;
-    }
-
-    .carousel-container {
-        display: flex;
-        scroll-behavior: smooth;
-        width: 100%;
-        padding: 60px;
-        overflow-x: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        scroll-snap-type: x mandatory;
-    }
-
-    .carousel-item {
-        min-width: 180px;
-        max-width: 200px;
-        margin: 5px;
-        transition: transform 0.4s ease-in-out;
-        position: relative;
-        background: white;
-        padding: 8px;
-        border-radius: 8px;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-        scroll-snap-align: start;
-    }
-
-    .prev,
-    .next {
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10;
-        padding: 8px;
-        border-radius: 8px;
-    }
-
-    .prev:hover,
-    .next:hover {
-        background: rgba(0, 0, 0, 0.8);
-    }
-
-    .prev {
-        left: 10px;
-    }
-
-    .next {
-        right: 10px;
-    }
-
-    .dropdown {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-    }
-
-    .dropdown-menu {
-        display: none;
-        position: absolute;
-        background: white;
-        box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-        padding: 3px;
-        border-radius: 3px;
-        right: 0;
-        z-index: 10;
-        width: 70px;
-    }
-
-    .dropdown-item {
-        font-size: 11px;
-        padding: 2px 4px;
-        display: flex;
-        align-items: center;
-        gap: 3px;
-    }
-
-    .dropdown-divider {
-        margin: 2px 0;
-    }
-
-    .dropdown.active .dropdown-menu {
-        display: block;
-    }
-
-    /* Modal Styles */
-    .custom-modal {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 250px;
-        background: white;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        z-index: 100;
         text-align: center;
-        padding: 15px;
+        background: white;
+        border-radius: 8px;
     }
 
-    .custom-modal-active {
+    .card-back {
+        transform: rotateY(180deg);
+        background-color: #f4f4f4;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .card-image {
+        width: 100%;
+        height: 100%;
+        /* Ensure image container matches the card's size */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Ensure the image fits the square size */
+    }
+
+    .card-title {
+        font-weight: bold;
+        margin-top: 0.5rem;
+        font-size: 1.1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kebab-menu {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+    }
+
+    .dropdown.is-active .dropdown-menu {
         display: block;
     }
 
-    .custom-modal-content {
-        padding: 10px;
-    }
-
-    .custom-modal-text {
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 12px;
-    }
-
-    .custom-modal-footer {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        margin-top: 10px;
-    }
-
-    .custom-modal-btn {
-        flex: 1;
-        padding: 6px 12px;
-        font-size: 13px;
-        border: none;
-        border-radius: 5px;
+    .column {
         cursor: pointer;
     }
 
-    .confirm-btn {
-        background-color: #4CAF50;
-        color: white;
-    }
+    /* Mobile responsiveness */
+    @media screen and (max-width: 768px) {
+        .card {
+            height: auto;
+        }
 
-    .cancel-btn {
-        background-color: #f44336;
-        color: white;
+        .card-image {
+            height: 150px;
+            /* Adjust image height on mobile */
+        }
+
+        .card-image img {
+            object-fit: contain;
+            /* Maintain aspect ratio on mobile */
+        }
     }
 </style>
 
+<div class="container">
+    <div class="box mt-4">
+        <h1 class="title has-text-centered">DOST VI Balik Scientist</h1>
 
+        <div class="buttons-container">
+            <a href="<?= base_url('institution/balik_scientist/create') ?>" class="button is-primary">
+                <span class="icon"><i class="fas fa-plus"></i></span>
+                <span>Create New</span>
+            </a>
+            <button class="button is-light">
+                <span class="icon"><i class="fas fa-download"></i></span>
+                <span>Download Template</span>
+            </button>
+        </div>
 
-<body>
-    <div class="container">
-        <div class="box mt-4">
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="notification is-danger"><?= session()->getFlashdata('error'); ?></div>
+        <?php endif; ?>
 
-            <div class="title">
-                <h1 class="title has-text-centered">DOST VI Balik Scientist</h1>
-            </div>
+        <?php if (session()->getFlashdata('success')): ?>
+            <div class="notification is-success"><?= session()->getFlashdata('success'); ?></div>
+        <?php endif; ?>
 
-            <!-- Buttons beside tabs -->
-            <div class="buttons-container">
-                <a href="<?= base_url('institution/balik_scientist/create') ?>" class="button is-primary">
-                    <span class="icon"><i class="fas fa-plus"></i></span>
-                    <span>Create New</span>
-                </a>
-
-                <button class="button is-light">
-                    <span class="icon"><i class="fas fa-download"></i></span>
-                    <span>Download Template</span>
-                </button>
-            </div>
-
-            <div class="carousel">
-                <button class="prev" onclick="scrollCarousel(-1)">&#10094;</button>
-                <div class="carousel-container" id="carouselContainer">
-                    <?php if (!empty($balik_scientists)): ?>
-                        <?php foreach ($balik_scientists as $scientist): ?>
-                            <div class="carousel-item">
-                                <img src="<?= !empty($scientist['image']) ? base_url($scientist['image']) : '/images/profile.png' ?>"
-                                    alt="<?= esc($scientist['first_name']) ?>" width="100%">
-
-                                <p class="card-title">
-                                    <a href="<?= base_url('institution/balik_scientist/view/' . $scientist['id']) ?>"
-                                        class="scientist-link">
-                                        <?= esc($scientist['honorifics']) . ' ' . esc($scientist['first_name']) . ' ' . esc($scientist['middle_name']) . ' ' . esc($scientist['last_name']) ?>
-                                    </a>
-                                </p>
-
-                                <!-- <p style="font-size: 12px; margin-top: 4px;"> -->
-                                <!-- <?= esc($scientist['description']) ?> -->
-                                </p>
-
-                                <small><?= esc($scientist['institution_name']) ?></small>
-
-                                <!-- Dropdown Menu -->
-                                <div class="dropdown">
-                                    <button onclick="toggleDropdown(event, this)">⋮</button>
-                                    <div class="dropdown-menu">
-                                        <div class="dropdown-content">
-                                            <a href="<?= base_url('institution/balik_scientist/edit/' . esc($scientist['id'])) ?>"
-                                                class="dropdown-item has-text-link">
-                                                ✏️ Edit
-                                            </a>
-                                            <hr class="dropdown-divider">
-                                            <a href="#" class="dropdown-item has-text-danger"
-                                                onclick="confirmDelete(<?= esc($scientist['id']) ?>)">
-                                                🗑️ Delete
-                                            </a>
-                                        </div>
+        <div class="columns is-multiline">
+            <?php foreach ($balik_scientists as $scientist): ?>
+                <div class="column is-one-quarter-desktop is-half-tablet is-full-mobile">
+                    <div class="card-flip" onclick="this.querySelector('.flip-inner').classList.toggle('is-flipped')">
+                        <div class="card">
+                            <div class="kebab-menu dropdown is-right is-hoverable" onclick="event.stopPropagation();">
+                                <div class="dropdown-trigger">
+                                    <button class="button is-white is-small">
+                                        <span class="icon is-small"><i class="fas fa-ellipsis-v"></i></span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-content">
+                                        <a href="<?= base_url('institution/balik_scientist/edit/' . esc($scientist['id'])) ?>"
+                                            class="dropdown-item">Edit</a>
+                                        <a href="#" class="dropdown-item has-text-danger"
+                                            onclick="confirmDelete(<?= esc($scientist['id']) ?>);">Delete</a>
                                     </div>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>No scientists found.</p>
-                    <?php endif; ?>
+
+                            <div class="flip-inner">
+                                <!-- Front -->
+                                <div class="card-front">
+                                    <div class="card-image">
+                                        <img src="<?= !empty($scientist['image']) ? base_url($scientist['image']) : '/images/profile.png' ?>"
+                                            alt="Scientist Image">
+                                    </div>
+                                    <div class="card-title">
+                                        <?= esc($scientist['honorifics']) . ' ' . esc($scientist['first_name']) . ' ' . esc($scientist['middle_name']) . ' ' . esc($scientist['last_name']) ?>
+                                    </div>
+                                </div>
+
+                                <!-- Back -->
+                                <div class="card-back">
+                                    <p><strong>Role:</strong> <?= esc($scientist['role']) ?></p>
+                                    <p><strong>Institution:</strong> <?= esc($scientist['institution_name']) ?></p>
+                                    <p><strong>Description:</strong> <?= esc($scientist['description']) ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="next" onclick="scrollCarousel(1)">&#10095;</button>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
-    <script>
-        function scrollCarousel(direction) {
-            const container = document.getElementById("carouselContainer");
-            const scrollAmount = 280;
-            container.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
-        }
+</div>
 
-        function toggleDropdown(event, button) {
-            event.stopPropagation();
-            closeAllDropdowns();
-            button.parentElement.classList.toggle("active");
+<script>
+    function confirmDelete(id) {
+        if (confirm("Are you sure you want to delete this scientist?")) {
+            window.location.href = "<?= base_url('institution/balik_scientist/delete/') ?>" + id;
         }
-
-        function closeAllDropdowns() {
-            document.querySelectorAll(".dropdown").forEach(d => d.classList.remove("active"));
-        }
-
-        document.addEventListener("click", closeAllDropdowns);
-
-        function confirmDelete(id) {
-            if (confirm("Are you sure you want to delete this scientist?")) {
-                window.location.href = "<?= base_url('institution/balik_scientist/delete/') ?>" + id;
-            }
-        }
-    </script>
-</body>
+    }
+</script>
 
 <?= $this->endSection() ?>

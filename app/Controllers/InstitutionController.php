@@ -41,8 +41,6 @@ class InstitutionController extends BaseController
         return view('institution/home', $data);
     }
 
-
-
     public function create_institution()
     {
         $db = \Config\Database::connect();
@@ -54,11 +52,28 @@ class InstitutionController extends BaseController
         return view('institution/create', ['stakeholders' => $stakeholders]);
     }
 
+    public function checkInstitutionExists($stakeholder_id)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('institutions');
+        $builder->where('stakeholder_id', $stakeholder_id);
+        $builder->where('status', 'active');
+        $query = $builder->get();
+
+        $exists = $query->getNumRows() > 0;
+
+        if ($exists) {
+            // Return as an array, ensuring message is included
+            return ['exists' => true, 'message' => 'This institution is already stored.'];
+        }
+
+        return ['exists' => false, 'message' => ''];  // Ensure there's an empty message when not found
+    }
+
     public function getStakeholderDetails($stakeholderId)
     {
         $db = \Config\Database::connect();
 
-        // Fetch stakeholder data
         $stakeholder = $db->table('stakeholders')
             ->where('id', $stakeholderId)
             ->get()
@@ -68,7 +83,6 @@ class InstitutionController extends BaseController
             return $this->response->setJSON([]);
         }
 
-        // Fetch associated person details using stakeholder_members
         $person = $db->table('persons')
             ->select('persons.id as person_id, persons.honorifics, persons.first_name, persons.middle_name, persons.last_name, persons.designation')
             ->join('stakeholder_members', 'stakeholder_members.person_id = persons.id')
@@ -76,19 +90,16 @@ class InstitutionController extends BaseController
             ->get()
             ->getRowArray();
 
-        // If no person data found, return empty response
         if (!$person) {
             return $this->response->setJSON([]);
         }
 
-        // Fetch contact details from contact_details table using the person_id
         $contactDetails = $db->table('contact_details')
             ->select('telephone_num, email_address')
-            ->where('person_id', $person['person_id'])  // Using the correct person_id
+            ->where('person_id', $person['person_id'])
             ->get()
             ->getRowArray();
 
-        // Merge stakeholder, person, and contact details
         return $this->response->setJSON(array_merge($stakeholder, $person, $contactDetails ?? []));
     }
 
@@ -98,7 +109,16 @@ class InstitutionController extends BaseController
         $timestamp = date('Y-m-d H:i:s');
 
         $stakeholderId = $this->request->getPost('stakeholder_id');
-        
+
+        // Check if institution already exists
+        $exists = $this->checkInstitutionExists($stakeholderId);
+
+        // If institution exists, return the error message
+        if ($exists['exists']) {
+            // Redirect with the error message
+            return redirect()->to('/institution/home')->with('error', $exists['message']);
+        }
+
         $image = $this->request->getFile('image');
         $imagePath = null;
 
@@ -111,6 +131,7 @@ class InstitutionController extends BaseController
         // Insert into Institutions
         $institutionData = [
             'type' => $this->request->getPost('type'),
+            'description' => $this->request->getPost('description'),
             'stakeholder_id' => $stakeholderId,
             'created_at' => $timestamp,
             'updated_at' => $timestamp,
@@ -122,19 +143,6 @@ class InstitutionController extends BaseController
     }
 
 
-    public function checkInstitutionExists($stakeholder_id)
-    {
-        // Perform a query directly in the controller to check if the institution exists
-        $db = \Config\Database::connect();
-        $builder = $db->table('institutions'); // Assuming 'institutions' is your table name
-        $builder->where('id', $stakeholder_id);
-        $query = $builder->get();
-
-        // Check if the institution was found
-        $exists = $query->getNumRows() > 0;
-
-        return $this->response->setJSON(['exists' => $exists]);
-    }
 
     public function edit($id)
     {
@@ -142,15 +150,9 @@ class InstitutionController extends BaseController
 
         // Fetch the institution details
         $institution = $db->table('institutions as i')
-            ->select('i.id as institution_id, i.type, i.image, 
-                  s.id as stakeholder_id, s.name, s.abbreviation, 
-                  s.street, s.barangay, s.municipality, s.province, s.country,
-                  p.id as person_id, p.honorifics, p.first_name, p.middle_name, p.last_name, p.designation,
-                  c.id as contact_id, c.telephone_num, c.email_address')
+            ->select('i.id as institution_id, i.type, i.image, i.description,
+                  s.id as stakeholder_id, s.name')
             ->join('stakeholders as s', 's.id = i.stakeholder_id', 'left')
-            ->join('stakeholder_members as sm', 'sm.stakeholder_id = s.id', 'left')
-            ->join('persons as p', 'p.id = sm.person_id', 'left')
-            ->join('contact_details as c', 'c.person_id = p.id', 'left')
             ->where('i.id', $id)
             ->get()
             ->getRowArray();
@@ -173,45 +175,6 @@ class InstitutionController extends BaseController
             return redirect()->to('/institution/home')->with('error', 'Institution not found!');
         }
 
-        // Fetch the person_id linked to the stakeholder
-        $person = $db->table('stakeholder_members')
-            ->select('person_id')
-            ->where('stakeholder_id', $institution['stakeholder_id'])
-            ->get()
-            ->getRowArray();
-
-        if ($person) {
-            // Update Person Details
-            $db->table('persons')->where('id', $person['person_id'])->update([
-                'honorifics' => $this->request->getPost('honorifics'),
-                'first_name' => $this->request->getPost('first_name'),
-                'middle_name' => $this->request->getPost('middle_name'),
-                'last_name' => $this->request->getPost('last_name'),
-                'designation' => $this->request->getPost('designation'),
-                'updated_at' => $timestamp
-            ]);
-
-            // Update Contact Details
-            $db->table('contact_details')->where('person_id', $person['person_id'])->update([
-                'telephone_num' => $this->request->getPost('telephone_num'),
-                'email_address' => $this->request->getPost('email_address'),
-                'updated_at' => $timestamp
-            ]);
-        }
-
-        // Update Stakeholder Details
-        $db->table('stakeholders')->where('id', $institution['stakeholder_id'])->update([
-            'name' => $this->request->getPost('name'),
-            'abbreviation' => $this->request->getPost('abbreviation'),
-            'street' => $this->request->getPost('street'),
-            'barangay' => $this->request->getPost('barangay'),
-            'municipality' => $this->request->getPost('municipality'),
-            'province' => $this->request->getPost('province'),
-            'country' => $this->request->getPost('country'),
-            'category' => 'Academe',
-            'updated_at' => $timestamp
-        ]);
-
         // Handle Image Update
         $image = $this->request->getFile('image');
         if ($image && $image->isValid() && !$image->hasMoved()) {
@@ -233,12 +196,12 @@ class InstitutionController extends BaseController
         // Update Institution Details
         $db->table('institutions')->where('id', $id)->update([
             'type' => $this->request->getPost('type'),
+            'description' => $this->request->getPost('description'),
             'updated_at' => $timestamp
         ]);
 
         return redirect()->to('/institution/home')->with('success', 'Institution updated successfully!');
     }
-
 
     public function delete($id)
     {
@@ -335,6 +298,32 @@ class InstitutionController extends BaseController
 
     }
 
+    public function search()
+    {
+        $query = $this->request->getGet('query');
+
+        if (!$query) {
+            return $this->response->setJSON([]);
+        }
+
+        $db = \Config\Database::connect();
+
+        $builder = $db->table('institutions as i');
+        $builder->select('i.id, s.name, s.abbreviation, s.street, s.barangay, s.municipality, s.province, i.image');
+        $builder->join('stakeholders as s', 's.id = i.stakeholder_id', 'left');
+        $builder->groupStart()
+            ->like('s.name', $query)
+            ->orLike('s.abbreviation', $query)
+            ->orLike('s.street', $query)
+            ->orLike('s.barangay', $query)
+            ->orLike('s.municipality', $query)
+            ->orLike('s.province', $query)
+            ->groupEnd();
+
+        $results = $builder->get()->getResultArray();
+
+        return $this->response->setJSON($results);
+    }
 }
 
 

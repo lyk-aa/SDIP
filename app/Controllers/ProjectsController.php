@@ -114,7 +114,7 @@ class ProjectsController extends BaseController
         ];
         $db->table('research_projects')->where('id', $id)->update($data);
 
-        return redirect()->to('/institution/projects/index')->with('success', 'Research updated successfully.');        
+        return redirect()->to('/institution/projects/index')->with('success', 'Research updated successfully.');
     }
 
 
@@ -154,4 +154,62 @@ class ProjectsController extends BaseController
         return view('institution/projects/details', ['project' => $project]);
     }
 
+    public function search()
+    {
+        $searchTerm = $this->request->getVar('query'); // Fetch the search term from the query parameter
+
+        // Use the search term to filter research projects
+        $db = \Config\Database::connect();
+        $builder = $db->table('research_projects p');
+        $builder->select('
+            p.id, 
+            p.name as project_name, 
+            p.description, 
+            p.status,
+            p.sector,
+            p.project_leader,
+            p.approved_amount
+        ');
+
+        // Apply search filter on project name and description
+        $builder->like('p.name', $searchTerm);
+        $builder->orLike('p.description', $searchTerm);
+
+        // Fetch the results
+        $projects = $builder->get()->getResult();
+
+        // Prepare the response
+        $response = [];
+        $response['projects'] = [];
+
+        // Loop through each project and add additional status-related classes/icons
+        foreach ($projects as $project) {
+            $statusClass = '';
+            $statusIcon = '';
+
+            if (strtolower(trim($project->status)) == 'completed') {
+                $statusClass = 'completed';
+                $statusIcon = '<i class="fas fa-check-circle"></i>';
+            } elseif (strtolower(trim($project->status)) == 'pending') {
+                $statusClass = 'pending';
+                $statusIcon = '<i class="fas fa-clock"></i>';
+            } elseif (strtolower(trim($project->status)) == 'ongoing') {
+                $statusClass = 'ongoing';
+                $statusIcon = '<i class="fas fa-spinner"></i>';
+            }
+
+            // Add the project to the response
+            $response['projects'][] = [
+                'id' => $project->id,
+                'name' => esc($project->project_name),
+                'description' => esc($project->description),
+                'status' => strtoupper($project->status),
+                'statusClass' => $statusClass,
+                'statusIcon' => $statusIcon,
+            ];
+        }
+
+        // Return the results as JSON
+        return $this->response->setJSON($response);
+    }
 }

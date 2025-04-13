@@ -46,6 +46,7 @@ $routes->post('/institution/update/(:num)', 'InstitutionController::update/$1');
 $routes->get('/institution/delete/(:num)', 'InstitutionController::delete/$1');
 $routes->get('institution/view/(:num)', 'InstitutionController::view/$1');
 $routes->get('institution/getStakeholderDetails/(:num)', 'InstitutionController::getStakeholderDetails/$1');
+$routes->get('institution/search', 'InstitutionController::search');
 
 
 
@@ -57,6 +58,8 @@ $routes->get('/institution/projects/edit/(:num)', 'ProjectsController::edit/$1')
 $routes->post('/institution/projects/update/(:num)', 'ProjectsController::update/$1');
 $routes->get('/institution/projects/delete/(:num)', 'ProjectsController::delete/$1');
 $routes->get('institution/projects/view/(:num)', 'ProjectsController::view/$1');
+$routes->post('institution/projects/search', 'Institution\ProjectController::search');
+
 
 //Institution Balik Scientist//
 $routes->get('/institution/balik_scientist/index', 'BalikScientistController::balik_scientist');
@@ -84,6 +87,8 @@ $routes->post('/institution/consortium/store', 'ConsortiumController::store');
 $routes->get('/institution/consortium/edit/(:num)', 'ConsortiumController::edit/$1');
 $routes->post('/institution/consortium/update/(:num)', 'ConsortiumController::update/$1');
 $routes->get('/institution/consortium/delete/(:num)', 'ConsortiumController::delete/$1');
+$routes->get('institution/consortium/search', 'ConsortiumController::search');
+
 
 $routes->get('/institution/ncrp_members', 'NcrpController::ncrp_members');
 $routes->get('/institution/research_centers', 'ResearchCentersController::research_centers');
