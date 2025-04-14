@@ -44,6 +44,7 @@ $routes->get('/institution/edit/(:num)', 'InstitutionController::edit/$1');
 $routes->post('/institution/update/(:num)', 'InstitutionController::update/$1');
 $routes->get('/institution/delete/(:num)', 'InstitutionController::delete/$1');
 $routes->get('institution/view/(:num)', 'InstitutionController::view/$1');
+$routes->get('institution/print/(:num)', 'InstitutionController::printInstitution/$1');   
 
 //Institution Projects//
 $routes->get('/institution/projects/index', 'ProjectsController::projects');
@@ -68,10 +69,26 @@ $routes->get('/institution/nrcp_members/index', 'NrcpController::nrcp_members');
 $routes->get('/institution/nrcp_members/create', 'NrcpController::create');
 $routes->post('/institution/nrcp_members/store', 'NrcpController::store');
 
-//Institutions Consorsium
+//Institutions Consortium
 $routes->get('/institution/consortium/index', 'ConsortiumController::consortium');
 $routes->get('/institution/consortium/create', 'ConsortiumController::create');
 $routes->post('/institution/consortium/store', 'ConsortiumController::store');
 
 $routes->get('/institution/ncrp_members', 'NcrpController::ncrp_members');
-$routes->get('/institution/research_centers', 'ResearchCentersController::research_centers');
+
+
+// Research Centers
+$routes->get('/institution/research_centers/index', 'ResearchCentersController::research_centers');
+$routes->get('/institution/research_centers/create', 'ResearchCentersController::create');
+$routes->post('/institution/research_centers/store', 'ResearchCentersController::store');
+$routes->get('/institution/research_centers/(:num)', 'ResearchCentersController::show/$1');
+$routes->put('/institution/research_centers/update/(:num)', 'ResearchCentersController::update/$1');
+$routes->delete('/institution/research_centers/delete/(:num)', 'ResearchCentersController::delete/$1');
+
+
+
+$routes->get('institution/print', 'Institution::printView');
+
+
+
+

@@ -286,9 +286,30 @@ class InstitutionController extends BaseController
             'completed_research_projects' => $completed_research_projects,
             'ongoing_research_projects' => $ongoing_research_projects
         ]);
-
     }
 
+
+
+    public function printView()
+{
+    $data['institutions'] = $this->institutionModel->findAll();
+    return view('institution/print_view', $data);
+}
+
+
+
+    public function printInstitution($id) 
+    {
+        return view("institution/print");
+    }
+
+    public function printInstitutions()
+    {
+        $this->load->model('Institution_model');
+        $data['institutions'] = $this->Institution_model->get_all_institutions();
+    
+        $this->load->view('print', $data);
+    }
 }
 
 

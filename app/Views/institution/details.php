@@ -70,6 +70,7 @@
     <section class="section">
         <div class="container">
             <div class="box">
+                <h1>Hello World</h1>
                 <!-- Institution Info -->
                 <div class="institution-info">
                     <div class="media">
@@ -109,8 +110,7 @@
 
                     <!-- Download Button -->
                     <div class="control">
-
-                        <button class="button is-light is-small">
+                        <button class="button is-light is-small" onclick="printForm()">
                             <span class="icon">
                                 <i class="fas fa-download"></i>
                             </span>
@@ -277,6 +277,11 @@
             document.getElementById("downloadFile").download = file.name;
         }
     });
+
+    // Handle File Print
+    function printForm() {
+        console.log("Print");
+    }
 </script>
 
 <?= $this->endSection() ?>

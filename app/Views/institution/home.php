@@ -128,7 +128,6 @@
 </style>
 
 <body>
-
     <!-- Flex container to align elements properly -->
     <div class="field is-flex is-align-items-center is-justify-content-flex-end" style="width: 100%; gap: 10px;">
 
@@ -157,13 +156,12 @@
         </div>
 
         <!-- Download Button -->
-        <div class="control">
-            <button class="button is-light is-small" style="height: 36px; display: flex; align-items: center;">
-                <span class="icon">
-                    <i class="fas fa-download"></i>
-                </span>
-            </button>
-        </div>
+        <button id="downloadButton" class="button is-light is-small" style="height: 36px; display: flex; align-items: center;">
+    <span class="icon">
+        <i class="fas fa-download"></i>
+    </span>
+</button>
+
 
     </div>
     <h1 class="title has-text-centered">Institutions</h1>
@@ -269,6 +267,55 @@
                 document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('is-active'));
             });
         });
+
+        document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('downloadButton').addEventListener('click', generatePDF);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('downloadButton').addEventListener('click', generatePDF);
+});
+
+function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    let y = 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('Institutions Directory', 105, y, { align: 'center' });
+    y += 10;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+
+    document.querySelectorAll('.card').forEach((card, index) => {
+        if (y > 270) {
+            doc.addPage();
+            y = 10;
+        }
+
+        let name = card.querySelector('.card-title a')?.textContent || 'No Name';
+        let address = card.querySelector('.card-description')?.textContent || 'No Address';
+        
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${index + 1}. ${name}`, 10, y);
+        y += 7;
+        doc.setFont('helvetica', 'normal');
+        doc.text(address, 15, y, { maxWidth: 180 });
+        y += 10;
+    });
+    
+    doc.save('institutions_directory.pdf');
+}
+
+// Ensure jsPDF is available
+if (typeof window.jspdf === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    script.onload = () => console.log('jsPDF loaded');
+    document.head.appendChild(script);
+}
+
 
     </script>
 
