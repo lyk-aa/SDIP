@@ -281,16 +281,6 @@
 
                         <div class="column is-half">
                             <div class="field">
-                                <label class="label">Abbreviation</label>
-                                <div class="control">
-                                    <input type="text" name="abbreviation" class="input"
-                                        value="<?= $institution['abbreviation'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
                                 <label class="label">Type</label>
                                 <div class="control">
                                     <div class="select-input-container">
@@ -299,8 +289,7 @@
                                         <select class="select-overlay"
                                             onchange="document.getElementById('type').value=this.value">
                                             <option value=""></option>
-                                            <option value="State">State</option>
-                                            <option value="University">University</option>
+                                            <option value="State University">State University</option>
                                             <option value="College">College</option>
                                             <option value="Training Center">Training Center</option>
                                             <option value="Research Institute">Research Institute</option>
@@ -311,135 +300,17 @@
                             </div>
                         </div>
 
-                        <div class="column is-half">
+                        <div class="column is-full">
                             <div class="field">
-                                <label class="label">Honorifics</label>
+                                <label class="label">Description</label>
                                 <div class="control">
-                                    <div class="select-input-container">
-                                        <input type="text" id="honorifics" name="honorifics" class="input"
-                                            value="<?= $institution['honorifics'] ?? '' ?>">
-                                        <select class="select-overlay"
-                                            onchange="document.getElementById('hon').value=this.value">
-                                            <option value=""></option>
-                                            <option value="Mr.">Mr.</option>
-                                            <option value="Ms.">Ms.</option>
-                                            <option value="Dr.">Dr.</option>
-                                            <option value="Prof.">Prof.</option>
-                                        </select>
-                                    </div>
+                                    <textarea class="textarea" name="description"
+                                        placeholder="Enter institution description here..."
+                                        required><?= esc($institution['description'] ?? '') ?></textarea>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">First Name</label>
-                                <div class="control">
-                                    <input type="text" name="first_name" class="input"
-                                        value="<?= $institution['first_name'] ?? '' ?>" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Middle Initial</label>
-                                <div class="control">
-                                    <input type="text" name="middle_name" class="input"
-                                        value="<?= $institution['middle_name'] ?? '' ?>" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Last Name</label>
-                                <div class="control">
-                                    <input type="text" name="last_name" class="input"
-                                        value="<?= $institution['last_name'] ?? '' ?>" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Designation</label>
-                                <div class="control">
-                                    <input type="text" name="designation" class="input"
-                                        value="<?= $institution['designation'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Country</label>
-                                <div class="control">
-                                    <input type="text" name="country" class="input"
-                                        value="<?= $institution['country'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Province</label>
-                                <div class="control">
-                                    <input type="text" name="province" class="input"
-                                        value="<?= $institution['province'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Municipality</label>
-                                <div class="control">
-                                    <input type="text" name="municipality" class="input"
-                                        value="<?= $institution['municipality'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Street</label>
-                                <div class="control">
-                                    <input type="text" name="street" class="input"
-                                        value="<?= $institution['street'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Barangay</label>
-                                <div class="control">
-                                    <input type="text" name="barangay" class="input"
-                                        value="<?= $institution['barangay'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Telephone Number</label>
-                                <div class="control">
-                                    <input type="text" name="telephone_num" class="input"
-                                        value="<?= $institution['telephone_num'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Email Address</label>
-                                <div class="control">
-                                    <input type="email" name="email_address" class="input"
-                                        value="<?= $institution['email_address'] ?? '' ?>">
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <section class="modal-card-foot has-text-right">

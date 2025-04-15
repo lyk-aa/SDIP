@@ -290,13 +290,13 @@
                             <div class="field">
                                 <label class="label">Institution</label>
                                 <div class="control">
-                                    <div class="select">
+                                    <div class="select is-fullwidth">
                                         <select name="institution" required>
                                             <option value="">Select Institution</option>
                                             <?php foreach ($institutions as $institution): ?>
-                                                <option value="<?= $institution['id'] ?>"
-                                                    <?= ($institution['id'] == $project['institution_id']) ? 'selected' : '' ?>>
-                                                    <?= $institution['name'] ?>
+                                                <option value="<?= $institution->id ?>"
+                                                    <?= ($institution->id == $project['institution_id']) ? 'selected' : '' ?>>
+                                                    <?= $institution->name ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
@@ -358,7 +358,8 @@
                                 <label class="label">Approved Amount</label>
                                 <div class="control">
                                     <input type="text" name="approved_amount" class="input"
-                                        value="<?= old('approved_amount', $project['approved_amount'] ?? '') ?>" required>
+                                        value="<?= old('approved_amount', $project['approved_amount'] ?? '') ?>"
+                                        required>
                                 </div>
                             </div>
                         </div>

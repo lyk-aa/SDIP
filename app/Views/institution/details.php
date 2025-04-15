@@ -47,30 +47,95 @@
         background-color: #e8e8e8;
     }
 
+    /* Institution Info */
     .institution-info {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 15px;
+        padding: 20px;
         border-bottom: 2px solid #ddd;
     }
 
+    .institution-info .media {
+        display: flex;
+        align-items: center;
+    }
+
+    .institution-info .image {
+        margin-right: 15px;
+    }
+
+    .institution-info .title {
+        margin: 0;
+    }
+
+    /* Dropdown and Buttons */
+    .field {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    .select,
+    .button {
+        margin-top: 10px;
+    }
+
+    /* Section Styling */
+    .section-content {
+        display: none;
+        margin-top: 20px;
+    }
+
+    /* Tables */
+    table {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .table thead {
+        background-color: #f9f9f9;
+    }
+
+    .table th,
+    .table td {
+        padding: 12px 15px;
+        text-align: left;
+    }
+
+    /* Column widths */
     .wide-column {
-        width: 23%;
-        /* Adjust as needed */
+        width: 25%;
     }
 
     .narrow-column {
-        width: 11%;
-        /* Adjust as needed */
+        width: 15%;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 768px) {
+
+        .wide-column,
+        .narrow-column {
+            width: 100%;
+        }
+
+        .institution-info {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .field {
+            width: 100%;
+            margin-top: 10px;
+        }
     }
 </style>
+
 
 <body>
     <section class="section">
         <div class="container">
             <div class="box">
-                <h1>Hello World</h1>
                 <!-- Institution Info -->
                 <div class="institution-info">
                     <div class="media">
@@ -85,24 +150,18 @@
                         <h1 class="title is-5 has-text-weight-bold"><?= esc($institution['name']) ?></h1>
                     </div>
 
-                    <!-- Spacer -->
-                    <div class="column"></div>
-                    <!-- Dropdown -->
-                    <div class="field mr-4">
+                    <!-- Dropdown & Button -->
+                    <div class="field">
                         <div class="control">
-                            <div class="select is-smaller" style="width: 200px; padding: 6px;">
+                            <div class="select is-smaller" style="width: 200px;">
                                 <select id="categoryDropdown" onchange="navigateToCategory()">
-                                    <option value="<?= base_url('institution/home') ?>">All</option>
-                                    <option value="<?= base_url('institution/research_centers/index') ?>">Research,
-                                        Development
-                                        and Innovation Centers</option>
-                                    <option value="<?= base_url('institution/consortium/index') ?>">Consortium
-                                        Membership</option>
-                                    <option value="<?= base_url('institution/projects/index') ?>">R&D Projects</option>
-                                    <option value="<?= base_url('institution/balik_scientist/index') ?>">Balik
-                                        Scientists</option>
-                                    <option value="<?= base_url('institution/ncrp_members/index') ?>">NCRP Members
+                                    <option value="all">All</option>
+                                    <option value="research_centers">Research, Development and Innovation Centers
                                     </option>
+                                    <option value="consortium">Consortium Membership</option>
+                                    <option value="projects">Research Projects</option>
+                                    <option value="balik_scientist">Balik Scientists</option>
+                                    <option value="ncrp_members">NCRP Members</option>
                                 </select>
                             </div>
                         </div>
@@ -110,7 +169,7 @@
 
                     <!-- Download Button -->
                     <div class="control">
-                        <button class="button is-light is-small" onclick="printForm()">
+                        <button class="button is-light is-small" onclick="printForm('<?= site_url('institution/view/print') ?>')">
                             <span class="icon">
                                 <i class="fas fa-download"></i>
                             </span>
@@ -118,10 +177,11 @@
                     </div>
                 </div>
 
-                <div class="box mt-4">
-                    <h2 class="title is-4 has-text-weight-bold">Institution Details</h2>
-                    <div class="card-content">
-                        <div class="content">
+                <!-- Institution Details -->
+                <div class="card-content">
+                    <div class="content">
+                        <div id="details">
+                            <h3 class="title is-5">Institution Details</h3>
                             <div class="columns">
                                 <!-- Left Column -->
                                 <div class="column is-6">
@@ -140,16 +200,21 @@
                                     <p><strong>Email:</strong> <?= esc($institution['email_address']) ?></p>
                                 </div>
                             </div>
+                        </div>
 
+
+                        <!-- Consortium Section -->
+                        <div id="consortium" class="section-content">
                             <?php if (!empty($consortium['consortium_name'])): ?>
                                 <h3 class="title is-5">Consortium</h3>
                                 <ul>
                                     <?= esc($consortium['consortium_name']) ?>
                                 </ul>
                             <?php endif; ?>
+                        </div>
 
-
-                            <!-- NRCP Members -->
+                        <!-- NRCP Members Section -->
+                        <div id="ncrp_members" class="section-content">
                             <?php if (!empty($nrcp_members)): ?>
                                 <h3 class="title is-5">NRCP Members</h3>
                                 <ul>
@@ -158,9 +223,10 @@
                                     <?php endforeach; ?>
                                 </ul>
                             <?php endif; ?>
+                        </div>
 
-
-                            <!-- Balik Scientist Engaged Members -->
+                        <!-- Balik Scientist Engaged Section -->
+                        <div id="balik_scientist" class="section-content">
                             <?php if (!empty($balik_scientists)): ?>
                                 <h3 class="title is-5">Balik Scientist Engaged</h3>
                                 <ul>
@@ -169,9 +235,10 @@
                                     <?php endforeach; ?>
                                 </ul>
                             <?php endif; ?>
+                        </div>
 
-
-                            <!-- Research Projects -->
+                        <!-- Research Projects Section -->
+                        <div id="projects" class="section-content">
                             <h3 class="title is-5">Ongoing Research Projects</h3>
                             <table class="table is-striped is-hoverable is-fullwidth">
                                 <thead>
@@ -205,7 +272,9 @@
                                     <?php endif; ?>
                                 </tbody>
                             </table>
+                        </div>
 
+                        <div id="completed_projects" class="section-content">
                             <h3 class="title is-5">Completed Research Projects</h3>
                             <table class="table is-striped is-hoverable is-fullwidth">
                                 <thead>
@@ -242,8 +311,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+        </div>
         </div>
     </section>
 </body>
@@ -251,9 +320,35 @@
 <script>
     function navigateToCategory() {
         let dropdown = document.getElementById('categoryDropdown');
-        let selectedUrl = dropdown.value;
-        if (selectedUrl) {
-            window.location.href = selectedUrl;
+        let selectedValue = dropdown.value;
+
+        // Hide all sections
+        document.querySelectorAll('.section-content').forEach(function (section) {
+            section.style.display = 'none';
+        });
+
+        // Hide institution details (id="details") when a category other than "all" is selected
+        let institutionDetails = document.getElementById('details');
+        if (selectedValue === 'all') {
+            institutionDetails.style.display = 'block';
+        } else {
+            institutionDetails.style.display = 'none';
+        }
+
+        // Show the selected section
+        if (selectedValue === 'all') {
+            document.querySelectorAll('.section-content').forEach(function (section) {
+                section.style.display = 'block';
+            });
+        } else if (selectedValue === 'projects') {
+            // Show both ongoing and completed projects sections
+            document.getElementById('projects').style.display = 'block';
+            document.getElementById('completed_projects').style.display = 'block';
+        } else {
+            let section = document.getElementById(selectedValue);
+            if (section) {
+                section.style.display = 'block';
+            }
         }
     }
 
@@ -279,9 +374,23 @@
     });
 
     // Handle File Print
-    function printForm() {
-        console.log("Print");
+    function printForm(url) {
+        const printWindow = window.open( url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
+
+        printWindow.addEventListener('load', () => {
+            if (Boolean(printWindow.chrome)) {
+                printWindow.print();
+                setTimeout(function(){
+                    printWindow.close();
+                }, 500);
+            } else {
+                printWindow.print();
+                printWindow.close();
+            }
+        }, true);
     }
+    // Initialize the page by showing all sections initially
+    window.onload = navigateToCategory;
 </script>
 
 <?= $this->endSection() ?>

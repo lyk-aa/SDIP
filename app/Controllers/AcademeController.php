@@ -41,66 +41,62 @@ class AcademeController extends BaseController
         return view('directory/academes/index', ['academes' => $academes]);
     }
 
+    public function academeCreate()
+    {
+        return view('directory/academes/create');
+    }
+
     public function academesStore()
     {
-        helper(['form', 'url']);
         $db = \Config\Database::connect();
-        $db->transStart();
+        $timestamp = date('Y-m-d H:i:s');
 
-        $stakeholderModel = new StakeholderModel();
-        $personModel = new PersonModel();
-        $contactModel = new ContactDetailsModel();
-        $stakeholderMemberModel = new StakeholderMembersModel();
+        $data = [
+            'name' => $this->request->getPost('regional_office'),
+            'abbreviation' => $this->request->getPost('abbreviation'),
+            'street' => $this->request->getPost('street'),
+            'barangay' => $this->request->getPost('barangay'),
+            'municipality' => $this->request->getPost('municipality'),
+            'province' => $this->request->getPost('province'),
+            'country' => $this->request->getPost('country'),
+            'postal_code' => $this->request->getPost('postal_code'),
+            'category' => 'Academe',
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp
+        ];
+        $db->table('stakeholders')->insert($data);
+        $stakeholderId = $db->insertID();
 
-        try {
+        $personData = [
+            'honorifics' => $this->request->getPost('hon'),
+            'first_name' => $this->request->getPost('first_name'),
+            'middle_name' => $this->request->getPost('middle_name'),
+            'last_name' => $this->request->getPost('last_name'),
+            'designation' => $this->request->getPost('designation'),
+            'role' => $this->request->getPost('position'),
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp
+        ];
+        $db->table('persons')->insert($personData);
+        $personId = $db->insertID();
 
-            $stakeholderData = [
-                'name' => $this->request->getPost('name'),
-                'abbreviation' => $this->request->getPost('agency'),
-                'address' => $this->request->getPost('address'),
-                'type' => 'academe',
-                'category' => 'academe',
-            ];
-            $stakeholderModel->insert($stakeholderData);
-            $stakeholderId = $stakeholderModel->getInsertID();
+        $db->table('stakeholder_members')->insert([
+            'stakeholder_id' => $stakeholderId,
+            'person_id' => $personId,
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp
+        ]);
 
-            $personData = [
-                'salutation' => '',
-                'first_name' => $this->request->getPost('head_of_office'),
-                'last_name' => '',
-                'designation' => $this->request->getPost('designation'),
-            ];
-            $personModel->insert($personData);
-            $personId = $personModel->getInsertID();
+        $contactData = [
+            'person_id' => $personId,
+            'telephone_num' => $this->request->getPost('telephone_num'),
+            'email_address' => $this->request->getPost('email_address'),
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp
+        ];
+        $db->table('contact_details')->insert($contactData);
 
-            $contactData = [
-                'person_id' => $personId,
-                'fax_num' => $this->request->getPost('fax'),
-                'telephone_num' => $this->request->getPost('telephone'),
-                'mobile_num' => $this->request->getPost('mobile'),
-                'email_address' => $this->request->getPost('email'),
-            ];
-            $contactModel->insert($contactData);
-
-            $stakeholderMemberData = [
-                'stakeholder_id' => $stakeholderId,
-                'person_id' => $personId,
-                'role' => 'Head of Office',
-            ];
-            $stakeholderMemberModel->insert($stakeholderMemberData);
-
-            $db->transComplete();
-
-            if ($db->transStatus() === false) {
-                return redirect()->back()->with('error', 'Failed to add academe');
-            }
-
-            return redirect()->to('directory/academes')->with('success', 'Academe added successfully');
-
-        } catch (\Exception $e) {
-            $db->transRollback();
-            return redirect()->back()->with('error', 'Failed to add academe: ' . $e->getMessage());
-        }
+        return redirect()->to('/directory/academes')->with('success', 'Regional Office added successfully!');
     }
 }
 

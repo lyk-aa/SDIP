@@ -20,22 +20,87 @@ class InstitutionController extends BaseController
     {
         $db = \Config\Database::connect();
         $builder = $db->table('institutions');
+
+        // Select the required columns
         $builder->select('
         institutions.id, institutions.image, institutions.type, 
         stakeholders.name, stakeholders.abbreviation, 
         stakeholders.street, stakeholders.barangay, 
         stakeholders.municipality, stakeholders.province
     ');
+
+        // Join the stakeholders table
         $builder->join('stakeholders', 'stakeholders.id = institutions.stakeholder_id');
+
+        // Add a condition to filter only active institutions
+        $builder->where('institutions.status', 'active');
+
+        // Get the results and pass them to the view
         $data['institutions'] = $builder->get()->getResultArray();
 
         return view('institution/home', $data);
     }
 
-
     public function create_institution()
     {
-        return view('institution/create');
+        $db = \Config\Database::connect();
+        $stakeholders = $db->table('stakeholders')
+            ->where('category', 'Academe')
+            ->get()
+            ->getResultArray();
+
+        return view('institution/create', ['stakeholders' => $stakeholders]);
+    }
+
+    public function checkInstitutionExists($stakeholder_id)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('institutions');
+        $builder->where('stakeholder_id', $stakeholder_id);
+        $builder->where('status', 'active');
+        $query = $builder->get();
+
+        $exists = $query->getNumRows() > 0;
+
+        if ($exists) {
+            // Return as an array, ensuring message is included
+            return ['exists' => true, 'message' => 'This institution is already stored.'];
+        }
+
+        return ['exists' => false, 'message' => ''];  // Ensure there's an empty message when not found
+    }
+
+    public function getStakeholderDetails($stakeholderId)
+    {
+        $db = \Config\Database::connect();
+
+        $stakeholder = $db->table('stakeholders')
+            ->where('id', $stakeholderId)
+            ->get()
+            ->getRowArray();
+
+        if (!$stakeholder) {
+            return $this->response->setJSON([]);
+        }
+
+        $person = $db->table('persons')
+            ->select('persons.id as person_id, persons.honorifics, persons.first_name, persons.middle_name, persons.last_name, persons.designation')
+            ->join('stakeholder_members', 'stakeholder_members.person_id = persons.id')
+            ->where('stakeholder_members.stakeholder_id', $stakeholderId)
+            ->get()
+            ->getRowArray();
+
+        if (!$person) {
+            return $this->response->setJSON([]);
+        }
+
+        $contactDetails = $db->table('contact_details')
+            ->select('telephone_num, email_address')
+            ->where('person_id', $person['person_id'])
+            ->get()
+            ->getRowArray();
+
+        return $this->response->setJSON(array_merge($stakeholder, $person, $contactDetails ?? []));
     }
 
     public function storeInstitution()
@@ -43,90 +108,51 @@ class InstitutionController extends BaseController
         $db = \Config\Database::connect();
         $timestamp = date('Y-m-d H:i:s');
 
-        $stakeholderData = [
-            'name' => $this->request->getPost('name'),
-            'street' => $this->request->getPost('street'),
-            'barangay' => $this->request->getPost('barangay'),
-            'municipality' => $this->request->getPost('municipality'),
-            'province' => $this->request->getPost('province'),
-            'country' => $this->request->getPost('country'),
-            'abbreviation' => $this->request->getPost('abbreviation'),
-            'category' => 'Academe',
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp
-        ];
-        $db->table('stakeholders')->insert($stakeholderData);
-        $stakeholderId = $db->insertID();
+        $stakeholderId = $this->request->getPost('stakeholder_id');
 
+        // Check if institution already exists
+        $exists = $this->checkInstitutionExists($stakeholderId);
 
-        $personData = [
-            'honorifics' => $this->request->getPost('honorifics'),
-            'first_name' => $this->request->getPost('first_name'),
-            'middle_name' => $this->request->getPost('middle_name'),
-            'last_name' => $this->request->getPost('last_name'),
-            'designation' => $this->request->getPost('designation'),
-            'updated_at' => $timestamp
-        ];
-
-        $db->table('persons')->insert($personData);
-        $personId = $db->insertID();
-
-        $image = $this->request->getFile('image');
-
-        if (!$image) {
-            die("File upload is missing! Check input name and form enctype.");
+        // If institution exists, return the error message
+        if ($exists['exists']) {
+            // Redirect with the error message
+            return redirect()->to('/institution/home')->with('error', $exists['message']);
         }
 
-        if ($image->isValid() && !$image->hasMoved()) {
+        $image = $this->request->getFile('image');
+        $imagePath = null;
+
+        if ($image && $image->isValid() && !$image->hasMoved()) {
             $newName = $image->getRandomName();
             $image->move('uploads/institutions', $newName);
             $imagePath = 'uploads/institutions/' . $newName;
-        } else {
-            $imagePath = null; // Default to NULL if no image was uploaded
         }
 
         // Insert into Institutions
         $institutionData = [
             'type' => $this->request->getPost('type'),
+            'description' => $this->request->getPost('description'),
             'stakeholder_id' => $stakeholderId,
             'created_at' => $timestamp,
             'updated_at' => $timestamp,
-            'image' => $imagePath, // Store file path
+            'image' => $imagePath
         ];
         $db->table('institutions')->insert($institutionData);
 
-        $db->table('stakeholder_members')->insert([
-            'stakeholder_id' => $stakeholderId,
-            'person_id' => $personId,
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp
-        ]);
-
-        $contactData = [
-            'person_id' => $personId,
-            'telephone_num' => $this->request->getPost('telephone_num'),
-            'email_address' => $this->request->getPost('email_address'),
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp
-        ];
-        $db->table('contact_details')->insert($contactData);
-
         return redirect()->to('/institution/home')->with('success', 'Institution added successfully!');
     }
+
+
+
     public function edit($id)
     {
         $db = \Config\Database::connect();
 
+        // Fetch the institution details
         $institution = $db->table('institutions as i')
-            ->select('i.id as institution_id, i.type, i.image, 
-                  s.id as stakeholder_id, s.name, s.abbreviation, 
-                  s.street, s.barangay, s.municipality, s.province, s.country,
-                  p.id as person_id, p.honorifics, p.first_name, p.middle_name, p.last_name, p.designation,
-                  c.id as contact_id, c.telephone_num, c.email_address')
+            ->select('i.id as institution_id, i.type, i.image, i.description,
+                  s.id as stakeholder_id, s.name')
             ->join('stakeholders as s', 's.id = i.stakeholder_id', 'left')
-            ->join('stakeholder_members as sm', 'sm.stakeholder_id = s.id', 'left') // Correct join
-            ->join('persons as p', 'p.id = sm.person_id', 'left') // Now correctly linking persons table
-            ->join('contact_details as c', 'c.person_id = p.id', 'left')
             ->where('i.id', $id)
             ->get()
             ->getRowArray();
@@ -138,57 +164,40 @@ class InstitutionController extends BaseController
         return view('institution/edit', ['institution' => $institution]);
     }
 
-
     public function update($id)
     {
         $db = \Config\Database::connect();
         $timestamp = date('Y-m-d H:i:s');
 
+        // Fetch the institution record
         $institution = $db->table('institutions')->where('id', $id)->get()->getRowArray();
-
         if (!$institution) {
             return redirect()->to('/institution/home')->with('error', 'Institution not found!');
         }
 
-        $db->table('stakeholders')->where('id', $institution['stakeholder_id'])->update([
-            'name' => $this->request->getPost('name'),
-            'abbreviation' => $this->request->getPost('abbreviation'),
-            'street' => $this->request->getPost('street'),
-            'barangay' => $this->request->getPost('barangay'),
-            'municipality' => $this->request->getPost('municipality'),
-            'province' => $this->request->getPost('province'),
-            'country' => $this->request->getPost('country'),
-            'category' => 'Academe',
-            'updated_at' => $timestamp
-        ]);
-
-        $db->table('persons')->where('id', $institution['id'])->update([
-            'honorifics' => $this->request->getPost('honorifics'),
-            'first_name' => $this->request->getPost('first_name'),
-            'middle_name' => $this->request->getPost('middle_name'),
-            'last_name' => $this->request->getPost('last_name'),
-            'designation' => $this->request->getPost('designation'),
-            'updated_at' => $timestamp
-        ]);
-
-        $db->table('contact_details')->where('person_id', $institution['id'])->update([
-            'telephone_num' => $this->request->getPost('telephone_num'),
-            'email_address' => $this->request->getPost('email_address'),
-            'updated_at' => $timestamp
-        ]);
-
+        // Handle Image Update
         $image = $this->request->getFile('image');
         if ($image && $image->isValid() && !$image->hasMoved()) {
+            // Delete old image if exists
+            $oldImage = $institution['image'];
+            if (!empty($oldImage) && file_exists($oldImage)) {
+                unlink($oldImage);
+            }
+
+            // Upload new image
             $newName = $image->getRandomName();
             $image->move('uploads/institutions', $newName);
             $imagePath = 'uploads/institutions/' . $newName;
 
+            // Update Image Path in Database
             $db->table('institutions')->where('id', $id)->update(['image' => $imagePath]);
         }
 
+        // Update Institution Details
         $db->table('institutions')->where('id', $id)->update([
             'type' => $this->request->getPost('type'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'description' => $this->request->getPost('description'),
+            'updated_at' => $timestamp
         ]);
 
         return redirect()->to('/institution/home')->with('success', 'Institution updated successfully!');
@@ -198,26 +207,26 @@ class InstitutionController extends BaseController
     {
         $db = \Config\Database::connect();
 
+        // Check if the ID is numeric
         if (!is_numeric($id)) {
             return redirect()->to('/institution/home')->with('error', 'Invalid Institution ID');
         }
 
+        // Fetch the institution details
         $institution = $db->table('institutions')->where('id', $id)->get()->getRowArray();
 
+        // If the institution is not found
         if (!$institution) {
             return redirect()->to('/institution/home')->with('error', 'Institution not found!');
         }
 
-        if (!empty($institution['image']) && file_exists($institution['image'])) {
-            unlink($institution['image']);
-        }
+        // Set the status to 'inactive' instead of deleting the record
+        $db->table('institutions')->where('id', $id)->update(['status' => 'inactive']);
 
-        $db->table('contact_details')->where('person_id', $institution['id'])->delete();
-        $db->table('persons')->where('id', $institution['id'])->delete();
-        $db->table('stakeholders')->where('id', $institution['stakeholder_id'])->delete();
-        $db->table('institutions')->where('id', $id)->delete();
+        // Optionally, you can also set the associated person's status to 'inactive' if needed
+        // $db->table('persons')->where('id', $institution['person_id'])->update(['status' => 'inactive']);
 
-        return redirect()->to('/institution/home')->with('success', 'Institution deleted successfully!');
+        return redirect()->to('/institution/home')->with('success', 'Institution status set to inactive!');
     }
 
     public function view($id)
@@ -288,27 +297,42 @@ class InstitutionController extends BaseController
         ]);
     }
 
-
-
-    public function printView()
-{
-    $data['institutions'] = $this->institutionModel->findAll();
-    return view('institution/print_view', $data);
-}
-
-
-
-    public function printInstitution($id) 
+    public function printIndividualInstitution()
     {
-        return view("institution/print");
+        // $data['institutions'] = $this->institutionModel->findAll();
+        return view('institution/print_institution');
     }
 
-    public function printInstitutions()
+    public function printViewInstitutions() 
     {
-        $this->load->model('Institution_model');
-        $data['institutions'] = $this->Institution_model->get_all_institutions();
-    
-        $this->load->view('print', $data);
+        return view('institution/print_institutions');
+    }
+
+    public function search()
+    {
+        $query = $this->request->getGet('query');
+
+        if (!$query) {
+            return $this->response->setJSON([]);
+        }
+
+        $db = \Config\Database::connect();
+
+        $builder = $db->table('institutions as i');
+        $builder->select('i.id, s.name, s.abbreviation, s.street, s.barangay, s.municipality, s.province, i.image');
+        $builder->join('stakeholders as s', 's.id = i.stakeholder_id', 'left');
+        $builder->groupStart()
+            ->like('s.name', $query)
+            ->orLike('s.abbreviation', $query)
+            ->orLike('s.street', $query)
+            ->orLike('s.barangay', $query)
+            ->orLike('s.municipality', $query)
+            ->orLike('s.province', $query)
+            ->groupEnd();
+
+        $results = $builder->get()->getResultArray();
+
+        return $this->response->setJSON($results);
     }
 }
 

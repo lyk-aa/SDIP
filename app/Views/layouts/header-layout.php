@@ -20,106 +20,117 @@
 
     <!-- /* Style for the map container */ -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+
     <style>
-        #map {
-            height: 500px;
-            width: 100%;
-            border-radius: 8px;
-            margin-top: 20px;
+ 
+        .tabs-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-content {
+            padding: 24px;
+            border-top: 2px solid #dbdbdb;
+            margin-top: 12px;
+        }
+
+        .tabs {
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .tabs ul {
+            margin-top: 15px;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 2rem;
+            margin-top: 60px;
+            margin-bottom: 30px;
         }
     </style>
 
 </head>
-
 <body>
-<!-- Header Section -->
-<header class="navbar">
-        <div class="container">
-            <div class="navbar-brand">
-                <a class="navbar-item" href="#">
-                <img src="<?= base_url('images/logo.png') ?>" alt="Logo">
-
-                </a>
-                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                </a>
-            </div>
-
-            <!-- Navbar Menu -->
-            <div id="navbarMenu" class="navbar-menu">
-                <div class="navbar-end">
-                    <a href="#" class="navbar-item has-tooltip" data-tooltip="Notifications">
-                        <span class="icon icon-circle">
-                            <i class="fa-regular fa-bell"></i>
-                        </span>
-                    </a>
-                    <a href="#" class="navbar-item has-tooltip" data-tooltip="Profile">
-                        <span class="icon icon-circle">
-                            <i class="fas fa-user-circle"></i>
-                        </span>
-                    </a>
-                </div>
-            </div>
-    </header>
-
-    <!-- Breadcrumb -->
     <div class="container">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul class="breadcrumb-list">
-                <li class=""><a href="<?= base_url('home') ?>">Home</a></li>
+                <li><a href="<?= base_url('home') ?>">Home</a></li>
                 <li><a href="<?= base_url('directory/home') ?>">Directory</a></li>
                 <li><a href="<?= base_url('institution/home') ?>" aria-current="page">Institution</a></li>
             </ul>
         </nav>
-                <!-- 
-        <div class="columns is-vcentered is-mobile">
-            Dropdown 
-            <div class="column is-3">
-                <div class="select is-fullwidth">
-                    <select id="category-select">
-                        <option selected hidden>Category</option>
-                        <option>Regional Office</option>
-                        <option>Business Sector</option>
-                        <option>Academe</option>
-                        <option>NGA</option>
-                        <option>NGO</option>
-                        <option>LGU</option>
-                        <option>SUC</option>
-                    </select>
-                </div>
-            </div> 
-            Buttons and Search 
-            <div class="column is-flex is-justify-content-flex-end is-align-items-center">
-                <a href="<?= base_url('directory/create') ?>">
-                    <button class="button is-primary is-outlined">
-                        <span class="icon no-bg">
-                            <i class="fas fa-plus"></i>
-                        </span>
-                        <span>Create New</span>
-                    </button>
-                </a>
 
-                <div class="control has-icons-left mx-2">
-                    <input class="input" type="text" placeholder="Search">
-                    <span class="icon is-small is-left no-bg">
-                        <i class="fas fa-search"></i>
-                    </span>
-                </div>
-                <a href="<?= base_url('institution/read') ?>">
-                <button class="button is-outlined">Filter</button>
-            </div>
-                    </div>
+        <!-- Tabs Navigation -->
+        <div class="tabs is-boxed">
+            <ul id="tabs">
+                <li>
+                    <a href="<?= base_url('institution/home') ?>">
+                        <span class="icon is-small"><i class="fas fa-list"></i></span>
+                        <span>All</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= base_url('institution/research_centers/index') ?>">
+                        <span class="icon is-small"><i class="fas fa-flask"></i></span>
+                        <span>Research Centers</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= base_url('institution/consortium/index') ?>">
+                        <span class="icon is-small"><i class="fas fa-users"></i></span>
+                        <span>Consortium</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= base_url('institution/projects/index') ?>">
+                        <span class="icon is-small"><i class="fas fa-project-diagram"></i></span>
+                        <span>R&D Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= base_url('institution/balik_scientist/index') ?>">
+                        <span class="icon is-small"><i class="fas fa-user-tie"></i></span>
+                        <span>Balik Scientists</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?= base_url('institution/nrcp_members/index') ?>">
+                        <span class="icon is-small"><i class="fas fa-address-book"></i></span>
+                        <span>NRCP Members</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-                 -->
-     
-   
-        <main>
-            <?= $this->renderSection('content') ?>
-        </main>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const currentUrl = window.location.href;
+            const tabs = document.querySelectorAll("#tabs li");
+
+            tabs.forEach(tab => {
+                const link = tab.querySelector("a");
+                if (link && currentUrl.includes(link.getAttribute("href"))) {
+                    tab.classList.add("is-active");
+                } else {
+                    tab.classList.remove("is-active");
+                }
+            });
+        });
+    </script>
+
+    <main>
+        <?= $this->renderSection('content') ?>
+    </main>
 
 </body>
 

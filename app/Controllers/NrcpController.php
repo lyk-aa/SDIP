@@ -110,6 +110,110 @@ class NrcpController extends BaseController
             }
         }
 
-        return redirect()->to('/institution/nrcp_members/index')->with('success', 'Scientist added successfully!');
+        return redirect()->to('/institution/nrcp_members/index')->with('success', 'NRCP Member added successfully!');
     }
+
+    public function delete($id)
+    {
+        $db = \Config\Database::connect();
+        $builder = $db->table('nrcp_members');
+        $builder->where('id', $id);
+        $builder->delete();
+
+        return redirect()->to('/institution/nrcp_members/index')->with('success', 'Scientist deleted successfully!');
+    }
+
+    public function view($id)
+    {
+        $db = \Config\Database::connect();
+
+        $nrcp = $db->table('nrcp_members nrcp')
+            ->select('nrcp.id, nrcp.description, nrcp.image, 
+                  i.id as institution_id, s.name as institution_name, i.image as institution_image,
+                  p.honorifics, p.first_name, p.middle_name, p.last_name, p.role')
+            ->join('institutions i', 'i.id = nrcp.institution_id', 'left')
+            ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
+            ->join('persons p', 'p.id = nrcp.person_id', 'left')
+            ->where('nrcp.id', $id)
+            ->get()
+            ->getRowArray();
+
+        return view('institution/nrcp_members/view', ['nrcp' => $nrcp]);
+    }
+
+    public function edit($id)
+    {
+        $db = \Config\Database::connect();
+
+        $nrcp = $db->table('nrcp_members nrcp')
+            ->select('nrcp.id, nrcp.description, nrcp.image, 
+                      i.id as institution_id, s.name as institution_name, 
+                      p.id as person_id, p.honorifics, p.first_name, p.middle_name, p.last_name, p.role')
+            ->join('institutions i', 'i.id = nrcp.institution_id', 'left')
+            ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
+            ->join('persons p', 'p.id = nrcp.person_id', 'left')
+            ->where('nrcp.id', $id)
+            ->get()
+            ->getRowArray();
+
+        if (!$nrcp) {
+            return redirect()->to('/institution/nrcp_members')->with('error', 'Scientist not found.');
+        }
+
+        $institutions = $db->table('institutions i')
+            ->select('i.id, s.name')
+            ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
+            ->get()
+            ->getResult();
+
+        return view('institution/nrcp_members/edit', [
+            'nrcp' => $nrcp, 
+            'institutions' => $institutions
+        ]);
+    }
+
+    public function update($id)
+    {
+        $db = \Config\Database::connect();
+        $timestamp = date('Y-m-d H:i:s');
+
+        // Fetch existing scientist data
+        $existingnrcp = $db->table('nrcp_members')->where('id', $id)->get()->getRowArray();
+        if (!$existingnrcp) {
+            return redirect()->to('/institution/nrcp')->with('error', 'Scientist not found.');
+        }
+
+        // Update persons table
+        $personData = [
+            'honorifics' => $this->request->getPost('honorifics'),
+            'first_name' => $this->request->getPost('first_name'),
+            'middle_name' => $this->request->getPost('middle_name'),
+            'last_name' => $this->request->getPost('last_name'),
+            'role' => $this->request->getPost('role'),
+            'updated_at' => $timestamp
+        ];
+        $db->table('persons')->where('id', $existingnrcp['person_id'])->update($personData);
+
+        // Handle file upload
+        $imageFile = $this->request->getFile('image');
+        $imagePath = $existingnrcp['image']; // Keep existing image if not changed
+
+        if ($imageFile && $imageFile->isValid() && !$imageFile->hasMoved()) {
+            $newName = $imageFile->getRandomName();
+            $imageFile->move('uploads/balik_scientists', $newName);
+            $imagePath = 'uploads/balik_scientists/' . $newName;
+        }
+
+        // Update scientist record
+        $nrcpData = [
+            'institution_id' => $this->request->getPost('institution'),
+            'description' => $this->request->getPost('description'),
+            'image' => $imagePath,
+            'updated_at' => $timestamp
+        ];
+        $db->table('nrcp_members')->where('id', $id)->update($nrcpData);
+
+        return redirect()->to('/institution/nrcp_members/index')->with('success', 'Scientist updated successfully.');
+    }
+
 }

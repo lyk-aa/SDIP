@@ -3,12 +3,17 @@
 <?= $this->section('content') ?>
 
 <section class="section">
-    <h6 class="title">Academes</h6>
-
-    <button class="button is-primary mb-4"
-        onclick="document.getElementById('addAcademeModal').classList.add('is-active');">
-        Create New </button>
-
+    <div class="level">
+        <div class="level-left">
+            <h3 class="title is-4 has-text-grey-dark">Academes</h3>
+        </div>
+        <div class="level-right">
+            <a href="<?= base_url('directory/academes/create') ?>" class="button is-primary">
+                <span class="icon"><i class="fas fa-plus"></i></span>
+                <span>Create New</span>
+            </a>
+        </div>
+    </div>
     <!-- Bulma Table -->
     <div class="table-container">
         <table class="table is-striped is-hoverable is-fullwidth">

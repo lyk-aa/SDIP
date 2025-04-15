@@ -59,7 +59,40 @@ class StakeholderSeeder extends Seeder
                 'postal_code' => '5000',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
+            ],
+
+            [
+                'abbreviation' => 'CAPSU',
+                'name' => 'Capiz State University',
+                'category' => 'Academe',
+                'municipality' => 'Capiz',
+                'province' => 'Capiz',
+                'street' => 'Luna Street',
+                'barangay' => 'Pilar',
+                'country' => 'Philippines',
+                'postal_code' => '5000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+
+            ],
+
+            [
+                'abbreviation' => 'SAN AG',
+                'name' => 'San Agustine University',
+                'category' => 'Academe',
+                'municipality' => 'Iloilo City',
+                'province' => 'Iloilo',
+                'street' => 'Luna Street',
+                'barangay' => 'La Paz',
+                'country' => 'Philippines',
+                'postal_code' => '5000',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ]
+
+
+
+
         ]);
 
         $stakeholders = $db->table('stakeholders')->get()->getResult();

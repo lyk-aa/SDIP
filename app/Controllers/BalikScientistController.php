@@ -207,7 +207,7 @@ class BalikScientistController extends BaseController
 
         $scientist = $db->table('balik_scientist_engaged bse')
             ->select('bse.id, bse.description, bse.image, 
-                      i.id as institution_id, s.name as institution_name, 
+                      i.id as institution_id, s.name as institution_name, i.image as institution_image,
                       p.honorifics, p.first_name, p.middle_name, p.last_name, p.role')
             ->join('institutions i', 'i.id = bse.institution_id', 'left')
             ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
@@ -216,6 +216,6 @@ class BalikScientistController extends BaseController
             ->get()
             ->getRowArray();
 
-        return view('institution/balik_scientist/details', ['scientist' => $scientist]);
+        return view('institution/balik_scientist/view', ['scientist' => $scientist]);
     }
 }

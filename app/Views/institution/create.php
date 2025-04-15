@@ -2,6 +2,12 @@
 <?= $this->section('content') ?>
 
 <style>
+    .existing-institution-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
     .modal-card-head,
     .modal-card-foot {
         background-color: #f0f0f0;
@@ -96,22 +102,6 @@
         font-size: 1.1rem;
     }
 
-    .title.is-5 {
-        font-weight: 700;
-        /* Makes the title bold */
-        font-size: 1.25rem;
-        color: #363636;
-        margin-bottom: 0.5rem;
-
-
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: #363636;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 0.3rem;
-    }
-
     .label {
         color: #555;
         font-weight: 500;
@@ -162,23 +152,6 @@
     .button.is-success,
     .button.is-primary {
         box-shadow: none;
-    }
-
-    .field.has-addons .control .button {
-        border-radius: 0 4px 4px 0;
-        padding: 0.5rem 0.75rem;
-    }
-
-    .field.has-addons .control.is-expanded .input {
-        border-radius: 4px 0 0 4px;
-    }
-
-    .has-text-right {
-        text-align: right;
-    }
-
-    .columns.is-multiline .column {
-        padding: 0.5rem;
     }
 
     .modal-background {
@@ -239,7 +212,6 @@
     }
 </style>
 
-
 <body>
     <!-- Main Modal for First Transaction -->
     <div class="modal is-active" id="main-modal">
@@ -250,55 +222,49 @@
                 <button class="delete" id="close-modal" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
-                <form id="stakeholder-form" action="<?= site_url('institution/store') ?>" method="post"
-                    enctype="multipart/form-data">
+                <form id="stakeholder-form" action="<?= site_url('institution/store') ?>" method="post" enctype="multipart/form-data">
                     <?= csrf_field() ?>
 
                     <!-- Image Upload -->
                     <div class="image-placeholder" onclick="document.getElementById('image').click()">
                         <figure class="profile-image">
                             <span id="profile-text" class="profile-text">Profile</span>
-                            <img id="profile-preview"
-                                src="<?= base_url('uploads/' . ($institution['image'] ?? 'default.png')) ?>">
+                            <img id="profile-preview" src="<?= base_url('uploads/' . ($institution['image'] ?? 'default.png')) ?>">
                             <div class="edit-button">
                                 <i class="fas fa-edit"></i>
                             </div>
                         </figure>
-                        <input type="file" id="image" name="image" accept="image/png, image/jpeg" class="hidden-input"
-                            onchange="previewImage(event)">
+                        <input type="file" id="image" name="image" accept="image/png, image/jpeg" class="hidden-input" onchange="previewImage(event)">
                     </div>
 
                     <div class="columns is-multiline">
+                        <!-- Institution Select -->
                         <div class="column is-half">
                             <div class="field">
                                 <label class="label">Institution</label>
                                 <div class="control">
-                                    <input type="text" name="name" class="input" required>
+                                    <div class="select">
+                                        <select id="institution-select" name="stakeholder_id" required>
+                                            <option value="">Select Institution</option>
+                                            <?php foreach ($stakeholders as $stakeholder): ?>
+                                                <option value="<?= $stakeholder['id'] ?>"><?= $stakeholder['name'] ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Abbreviation</label>
-                                <div class="control">
-                                    <input type="text" name="abbreviation" class="input">
-                                </div>
-                            </div>
-                        </div>
-
+                        <!-- Type Input -->
                         <div class="column is-half">
                             <div class="field">
                                 <label class="label">Type</label>
                                 <div class="control">
                                     <div class="select-input-container">
-                                        <input type="text" id="type" name="type" class="input"
-                                            placeholder="Or enter manually">
-                                        <select class="select-overlay"
-                                            onchange="document.getElementById('type').value=this.value">
+                                        <input type="text" id="type" name="type" class="input" placeholder="Or enter manually">
+                                        <select class="select-overlay" onchange="document.getElementById('type').value=this.value">
                                             <option value=""></option>
-                                            <option value="State">State</option>
-                                            <option value="University">University</option>
+                                            <option value="State University">State University</option>
                                             <option value="College">College</option>
                                             <option value="Training Center">Training Center</option>
                                             <option value="Research Institute">Research Institute</option>
@@ -309,139 +275,19 @@
                             </div>
                         </div>
 
-                        <div class="column is-half">
+                        <!-- Description Field (Full Width) -->
+                        <div class="column is-full">
                             <div class="field">
-                                <label class="label">Honorifics</label>
+                                <label class="label">Description</label>
                                 <div class="control">
-                                    <div class="select-input-container">
-                                        <input type="text" id="honorifics" name="honorifics" class="input"
-                                            placeholder="Or enter manually" list="honorifics-list">
-                                        <select class="select-overlay">
-                                            <option value=""></option>
-                                            <option value="Mr.">Mr.</option>
-                                            <option value="Ms.">Ms.</option>
-                                            <option value="Dr.">Dr.</option>
-                                            <option value="Prof.">Prof.</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">First Name</label>
-                                <div class="control">
-                                    <input type="text" name="first_name" class="input" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Middle Initial</label>
-                                <div class="control">
-                                    <input type="text" name="middle_name" class="input" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Last Name</label>
-                                <div class="control">
-                                    <input type="text" name="last_name" class="input" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Designation</label>
-                                <div class="control">
-                                    <input type="text" name="designation" class="input">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Country</label>
-                                <div class="control">
-                                    <div class="select-input-container">
-                                        <input type="text" id="country-input" name="country" class="input"
-                                            placeholder="Or enter manually">
-                                        <select class="select-overlay"
-                                            onchange="document.getElementById('country-input').value=this.value">
-                                            <option value=""></option>
-                                            <option value="USA">USA</option>
-                                            <option value="Canada">Canada</option>
-                                            <option value="UK">UK</option>
-                                            <option value="Australia">Australia</option>
-                                            <option value="Philippines">Philippines</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Province</label>
-                                <div class="control">
-                                    <input type="text" name="province" class="input">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Municipality</label>
-                                <div class="control">
-                                    <input type="text" name="municipality" class="input">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Street</label>
-                                <div class="control">
-                                    <input type="text" name="street" class="input">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Barangay</label>
-                                <div class="control">
-                                    <input type="text" name="barangay" class="input">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Telephone Number</label>
-                                <div class="control">
-                                    <input type="text" name="telephone_num" class="input">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Email Address</label>
-                                <div class="control">
-                                    <input type="email" name="email_address" class="input">
+                                    <textarea class="textarea" name="description" placeholder="Enter institution description here..."><?= old('description') ?></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <section class="modal-card-foot has-text-right">
-                        <button type="submit" class="button is-success">Save</button>
+                        <button type="submit" class="button is-success" id="submit-button" disabled>Save</button>
                     </section>
                 </form>
             </section>
@@ -449,41 +295,108 @@
     </div>
 
     <script>
+        // Disable submit button initially
+        disableSubmitButton();
+
+        document.getElementById('institution-select').addEventListener('change', function () {
+            let stakeholderId = this.value;
+            const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+
+            // Clear any previous messages or hover text
+            submitButton.removeAttribute('title');
+            submitButton.style.backgroundColor = '';
+            submitButton.style.cursor = '';
+
+            // Remove any existing warning message
+            const existingMessage = document.getElementById('existing-institution-message');
+            if (existingMessage) existingMessage.remove();
+
+            if (stakeholderId) {
+                // Check if the institution already exists
+                fetch('<?= site_url('institution/checkInstitutionExists') ?>/' + stakeholderId)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            // If institution exists, show warning and disable submit button
+                            showWarningMessage(data.message);
+                        } else {
+                            // If institution doesn't exist, enable the submit button
+                            enableSubmitButton();
+                        }
+                    })
+                    .catch(error => console.error('Error checking institution:', error));
+
+                // Fetch and populate institution details
+                fetch('<?= site_url('institution/getStakeholderDetails') ?>/' + stakeholderId)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.querySelector('input[name="type"]').value = data.type || '';
+                        document.querySelector('textarea[name="description"]').value = data.description || '';
+                    });
+            } else {
+                // Disable submit button if no institution is selected
+                disableSubmitButton();
+            }
+        });
+
+        // Function to disable the submit button
+        function disableSubmitButton() {
+            const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.style.backgroundColor = 'gray';
+            submitButton.style.cursor = 'not-allowed';
+            submitButton.setAttribute('title', 'Please select an institution');
+        }
+
+        // Function to show warning message and disable the submit button
+        function showWarningMessage(message) {
+            const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.style.backgroundColor = 'gray';
+            submitButton.style.cursor = 'not-allowed';
+            submitButton.setAttribute('title', message || '');
+
+            // Display the warning message
+            const messageElement = document.createElement('p');
+            messageElement.id = 'existing-institution-message';
+            messageElement.style.color = 'red';
+            messageElement.textContent = message;
+            document.getElementById('institution-select').parentNode.appendChild(messageElement);
+        }
+
+        // Function to enable the submit button when institution doesn't exist
+        function enableSubmitButton() {
+            const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+            submitButton.disabled = false;
+            submitButton.style.backgroundColor = '';
+            submitButton.style.cursor = '';
+            submitButton.removeAttribute('title');
+
+            // Remove any existing warning message
+            const existingMessage = document.getElementById('existing-institution-message');
+            if (existingMessage) existingMessage.remove();
+        }
+
+        // Prevent form submission if the submit button is disabled
+        document.querySelector('form').addEventListener('submit', function (event) {
+            const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+            if (submitButton.disabled) {
+                event.preventDefault();  // Prevent form submission if the button is disabled
+                alert("This institution is already stored and cannot be added again.");
+            }
+        });
+
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     document.getElementById('profile-preview').src = e.target.result;
-                    document.getElementById('profile-text').style.display = 'none';
-                };
+                }
                 reader.readAsDataURL(file);
             }
         }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".select-input-container").forEach(container => {
-                let inputField = container.querySelector("input");
-                let selectField = container.querySelector("select");
-
-                selectField.addEventListener("change", function () {
-                    if (this.value) {
-                        inputField.value = this.value;  // Update input field with selected value
-                        this.selectedIndex = 0;  // Reset dropdown to default empty option
-                    }
-                });
-
-                inputField.addEventListener("input", function () {
-                    if (this.value === "") {
-                        selectField.selectedIndex = 0;  // Reset dropdown if input is cleared
-                    }
-                });
-            });
-
-            document.getElementById("close-modal").addEventListener("click", function () {
-                window.location.href = "<?= base_url('institution/home') ?>"; // Redirect to institution/home
-            });
-        });
     </script>
+</body>
 
-    <?= $this->endSection() ?>
+<?= $this->endSection() ?>

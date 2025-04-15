@@ -35,27 +35,11 @@
         }
     </style>
 </head>
-<body onload="openPrintDialog()">
+<body>
 
 <div class="container">
-    <h2>Institution Directory</h2>
-
-    <?php foreach ($institutions as $institution): ?>
-        <div class="institution">
-            <h3><?= htmlspecialchars($institution['name']); ?></h3>
-            <p><strong>Address:</strong> <?= htmlspecialchars($institution['address']); ?></p>
-            <p><strong>Details:</strong> <?= htmlspecialchars($institution['details']); ?></p>
-        </div>
-    <?php endforeach; ?>
-
-    <button id="printButton" onclick="window.print()">Print</button>
+    <h2>Institutions</h2>
 </div>
-
-<script>
-    function openPrintDialog() {
-        window.print();
-    }
-</script>
 
 </body>
 </html>

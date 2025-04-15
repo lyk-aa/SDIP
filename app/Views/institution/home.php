@@ -2,85 +2,98 @@
 <?= $this->section('content') ?>
 
 <style>
+    .buttons-container {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-bottom: 10px;
+        margin-top: -10px;
+        flex-wrap: wrap;
+    }
+
+    .title {
+        font-size: 2.2rem;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .box {
+        margin-top: 30px;
+    }
+
     .card {
-        position: relative;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        background: white;
-        width: 380px;
-        height: 420px;
-        margin: auto;
+        border-radius: 8px;
+        margin-top: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        height: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
     }
 
     .card-image {
         width: 100%;
-        height: 250px;
-        overflow: hidden;
+        height: 220px;
         display: flex;
-        align-items: center;
         justify-content: center;
-        padding: 10px;
+        align-items: center;
+        background-color: #f9f9f9;
+        overflow: hidden;
+        border-bottom: 1px solid #eee;
+        padding: 15px;
     }
 
-    .card img.preview-image {
-        width: 100%;
-        height: 100%;
+    .card-image img {
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
-        object-position: center;
-    }
-
-    .card:hover img.preview-image {
-        transform: scale(1.05);
     }
 
     .card-content {
         padding: 15px;
-        text-align: left;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        min-height: 120px;
-
+        justify-content: flex-start;
     }
 
     .card-title {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #222;
-        margin-bottom: 8px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 6px;
         line-height: 1.2;
-        min-height: 40px;
-        /* Ensures titles always occupy space */
-        display: flex;
-        align-items: center;
-        /* Aligns text properly */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
+    }
+
+    .card-title:hover {
+        color: #3273dc;
     }
 
     .card-description {
-        font-size: 1rem;
-        ` color: #555;
-        margin-top: 4px;
-        line-height: 1.5;
-        word-wrap: break-word;
+        font-size: 0.95rem;
+        color: #4a4a4a;
+        line-height: 1.2;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
-        max-height: 4.5em;
-        min-height: 70px;
     }
 
-    /* Kebab Menu Fix */
+    .columns.is-multiline {
+        align-items: stretch;
+    }
+
     .kebab-menu {
         position: absolute;
         top: 10px;
         right: 10px;
+        z-index: 2;
     }
 
     .button.is-white {
@@ -93,234 +106,208 @@
         background: rgba(0, 0, 0, 0.05);
     }
 
+    @media screen and (max-width: 768px) {
 
-    /* Modal Customizations */
-    .modal-card {
-        border-radius: 8px;
-    }
+        .card-title,
+        .card-description {
+            font-size: 0.95rem;
+        }
 
-    .modal-image-preview {
-        max-width: 100%;
-        height: auto;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;
-    }
-
-    #file-input {
-        margin-top: 0;
-        padding-top: 0;
-    }
-
-    .institution-link{
-        color: black;
-    }
-
-    .institution-link:hover{
-        color: blue;
+        .buttons-container {
+            justify-content: center;
+        }
     }
 </style>
 
 <body>
-    <!-- Flex container to align elements properly -->
-    <div class="field is-flex is-align-items-center is-justify-content-flex-end" style="width: 100%; gap: 10px;">
+    <div class="container">
+        <div class="box mt-4">
 
-        <!-- Create New Button -->
-        <div class="control">
-            <a href="<?= base_url('institution/create') ?>" class="button is-primary"
-                style="height: 36px; display: flex; align-items: center;">
-                <span class="icon"><i class="fas fa-plus"></i></span>
-                <span>Create New</span>
-            </a>
-        </div>
-
-        <!-- Dropdown -->
-        <div class="control">
-            <div class="select is-smaller" style="width: 200px; height: 36px; display: flex; align-items: center;">
-                <select id="categoryDropdown" onchange="navigateToCategory()" style="height: 100%;">
-                    <option value="<?= base_url('institution/home') ?>">All</option>
-                    <option value="<?= base_url('institution/research_centers/index') ?>">Research, Development and
-                        Innovation Centers</option>
-                    <option value="<?= base_url('institution/consortium/index') ?>">Consortium Membership</option>
-                    <option value="<?= base_url('institution/projects/index') ?>">R&D Projects</option>
-                    <option value="<?= base_url('institution/balik_scientist/index') ?>">Balik Scientists</option>
-                    <option value="<?= base_url('institution/nrcp_members/index') ?>">NCRP Members</option>
-                </select>
+            <div class="title has-text-centered">
+                <h1>Institutions</h1>
             </div>
-        </div>
 
-        <!-- Download Button -->
-        <button id="downloadButton" class="button is-light is-small" style="height: 36px; display: flex; align-items: center;">
-    <span class="icon">
-        <i class="fas fa-download"></i>
-    </span>
-</button>
-
-
-    </div>
-    <h1 class="title has-text-centered">Institutions</h1>
-
-    <div class="columns is-multiline" id="card-container">
-
-        <?php foreach ($institutions as $institution): ?>
-        <div class="column is-one-fifth-desktop is-half-tablet is-full-mobile">
-            <div class="card">
-                <div class="card-image">
-                    <img src="<?= !empty($institution['image']) ? base_url($institution['image']) : 'https://via.placeholder.com/200x150?text=No+Image' ?>"
-                        alt="Institution Image" class="preview-image">
+            <!-- 🔔 Flash message for duplicate institution -->
+            <?php if (session()->has('error')): ?>
+                <div class="notification is-danger is-light">
+                    <button class="delete"></button>
+                    <?= session('error') ?>
                 </div>
+            <?php endif; ?>
 
-                <div class="dropdown is-right kebab-menu">
-                    <div class="dropdown-trigger">
-                        <button class="button is-white is-small">
-                            <span class="icon is-small">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="dropdown-menu" role="menu">
-                        <div class="dropdown-content">
-                            <a href="<?= base_url('institution/edit/' . $institution['id']) ?>" class="dropdown-item">✏️
-                                Edit</a>
-                            <a href="<?= base_url('institution/delete/' . $institution['id']) ?>"  class="dropdown-item has-text-danger" onclick="confirmDelete(this)">🗑️
-                                Delete</a>
+            <div class="buttons-container" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <div class="control has-icons-left">
+                    <input id="search-input" class="input" type="text" placeholder="Search..." />
+                    <span class="icon is-left">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+                
+                <a href="<?= base_url('institution/create') ?>" class="button is-primary">
+                    <span class="icon"><i class="fas fa-plus"></i></span>
+                    <span>Create New</span>
+                </a>
+
+                <button class="button is-light" onclick="printForm('<?= site_url('institution/home/print') ?>')">
+                    <span class="icon"><i class="fas fa-download"></i></span>
+                </button>
+            </div>
+
+            <div id="search-results" style="margin-top: 20px;">
+                <!-- Search results will be shown here -->
+            </div>
+
+            <div class="columns is-multiline" id="card-container">
+                <?php foreach ($institutions as $institution): ?>
+                    <div class="column is-one-fifth-desktop is-half-tablet is-full-mobile">
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="<?= !empty($institution['image']) ? base_url($institution['image']) : 'https://via.placeholder.com/200x150?text=No+Image' ?>"
+                                    alt="Institution Image" class="preview-image">
+                            </div>
+
+                            <div class="dropdown is-right kebab-menu">
+                                <div class="dropdown-trigger">
+                                    <button class="button is-white is-small">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" role="menu">
+                                    <div class="dropdown-content">
+                                        <a href="<?= base_url('institution/edit/' . $institution['id']) ?>"
+                                            class="dropdown-item">✏️ Edit</a>
+                                        <a href="<?= base_url('institution/delete/' . $institution['id']) ?>"
+                                            class="dropdown-item has-text-danger" onclick="confirmDelete(this)">🗑️
+                                            Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-content">
+                                <p class="card-title">
+                                    <a href="<?= base_url('institution/view/' . $institution['id']) ?>">
+                                        <?= esc($institution['name']) ?> (<?= esc($institution['abbreviation']) ?>)
+                                    </a>
+                                </p>
+                                <p class="card-description">
+                                    <?= esc($institution['street']) ?>, <?= esc($institution['barangay']) ?>,
+                                    <?= esc($institution['municipality']) ?>, <?= esc($institution['province']) ?>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Institution Details -->
-                <div class="card-content">
-                    <p class="card-title">
-                        <a href="<?= base_url(relativePath: 'institution/view/' . $institution['id']) ?>" class="institution-link">
-                            <?= esc($institution['name']) ?> (<?= esc($institution['abbreviation']) ?>)
-                        </a>
-                    </p>
-                    <p class="card-description">
-                        <?= esc($institution['street']) ?>, <?= esc($institution['barangay']) ?>,
-                        <?= esc($institution['municipality']) ?>, <?= esc($institution['province']) ?>
-                    </p>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
-        <?php endforeach; ?>
-
-
     </div>
-    </section>
+</body>
 
-
-    <!-- JavaScript -->
-    <script>
-
-        function navigateToCategory() {
-            let dropdown = document.getElementById('categoryDropdown');
-            let selectedUrl = dropdown.value;
-            if (selectedUrl) {
-                window.location.href = selectedUrl;
-            }
+<script>
+    function confirmDelete(index) {
+        if (confirm("Are you sure you want to delete?")) {
+            window.location.href = index.getAttribute("href");
         }
-        let currentEditingCard = null;
+    }
 
-        function redirectToDetails(event, url) {
-            window.location.href = url;
-        }
-
-
-        // Delete card
-        function confirmDelete(index) {
-            let modal = document.getElementById("confirmModal");
-            modal.classList.add("custom-modal-active");
-
-            document.getElementById("confirmText").innerText = "Are you sure you want to delete?";
-
-            document.getElementById("confirmYes").onclick = function () {
-                scientists.splice(index, 1);
-                closeModal();
-                renderCarousel();
-            };
-        }
-        // Kebab menu toggle
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.dropdown-trigger button').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const dropdown = this.closest('.dropdown');
-                    dropdown.classList.toggle('is-active');
-                });
-            });
-
-            // Prevent the dropdown from closing when clicking inside
-            document.querySelectorAll('.dropdown-content').forEach(content => {
-                content.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                });
-            });
-
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', () => {
-                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('is-active'));
+    document.addEventListener('DOMContentLoaded', () => {
+        // Dropdown toggle
+        document.querySelectorAll('.dropdown-trigger button').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const dropdown = this.closest('.dropdown');
+                dropdown.classList.toggle('is-active');
             });
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('downloadButton').addEventListener('click', generatePDF);
-});
+        document.querySelectorAll('.dropdown-content').forEach(content => {
+            content.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        });
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('downloadButton').addEventListener('click', generatePDF);
-});
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('is-active'));
+        });
 
-function generatePDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    let y = 10;
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
-    doc.text('Institutions Directory', 105, y, { align: 'center' });
-    y += 10;
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-
-    document.querySelectorAll('.card').forEach((card, index) => {
-        if (y > 270) {
-            doc.addPage();
-            y = 10;
-        }
-
-        let name = card.querySelector('.card-title a')?.textContent || 'No Name';
-        let address = card.querySelector('.card-description')?.textContent || 'No Address';
-        
-        doc.setFont('helvetica', 'bold');
-        doc.text(`${index + 1}. ${name}`, 10, y);
-        y += 7;
-        doc.setFont('helvetica', 'normal');
-        doc.text(address, 15, y, { maxWidth: 180 });
-        y += 10;
+        // Flash message close
+        document.querySelectorAll('.notification .delete').forEach(($delete) => {
+            const $notification = $delete.parentNode;
+            $delete.addEventListener('click', () => {
+                $notification.remove();
+            });
+        });
     });
-    
-    doc.save('institutions_directory.pdf');
-}
 
-// Ensure jsPDF is available
-if (typeof window.jspdf === 'undefined') {
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    script.onload = () => console.log('jsPDF loaded');
-    document.head.appendChild(script);
-}
+    // 🔍 Dynamic Search
+    const searchInput = document.getElementById('search-input');
+    const cardContainer = document.getElementById('card-container');
+    const searchResults = document.getElementById('search-results');
 
+    searchInput.addEventListener('input', function () {
+        const query = this.value.trim();
 
-    </script>
+        if (query.length > 0) {
+            fetch(`<?= base_url('institution/search') ?>?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    let resultsHtml = '';
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            resultsHtml += `
+                                <div class="column is-one-fifth-desktop is-half-tablet is-full-mobile">
+                                    <div class="card">
+                                        <div class="card-image">
+                                            <img src="${item.image ? `<?= base_url() ?>/${item.image}` : 'https://via.placeholder.com/200x150?text=No+Image'}"
+                                                 alt="Institution Image" class="preview-image">
+                                        </div>
+                                        <div class="card-content">
+                                            <p class="card-title">
+                                                <a href="<?= base_url('institution/view/') ?>${item.id}">
+                                                    ${item.name} (${item.abbreviation})
+                                                </a>
+                                            </p>
+                                            <p class="card-description">
+                                                ${item.street}, ${item.barangay}, ${item.municipality}, ${item.province}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>`;
+                        });
+                    } else {
+                        resultsHtml = '<p>No results found</p>';
+                    }
 
-</body>
+                    searchResults.innerHTML = `<div class="columns is-multiline">${resultsHtml}</div>`;
+                    cardContainer.style.display = 'none'; // hide original cards
+                })
+                .catch(error => {
+                    console.error('Search Error:', error);
+                });
+        } else {
+            searchResults.innerHTML = '';
+            cardContainer.style.display = 'flex'; // show original cards again
+        }
+    });
 
+    // Handle File Print
+    function printForm(url) {
+        const printWindow = window.open( url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
+
+        printWindow.addEventListener('load', () => {
+            if (Boolean(printWindow.chrome)) {
+                printWindow.print();
+                setTimeout(function(){
+                    printWindow.close();
+                }, 500);
+            } else {
+                printWindow.print();
+                printWindow.close();
+            }
+        }, true);
+    }
+</script>
 
 
 <?= $this->endSection() ?>
