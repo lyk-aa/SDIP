@@ -52,7 +52,7 @@
                             </tr>
                             <tr>
                                 <td><strong>Duration</strong></td>
-                                <td><?= esc($project['duration']) ?> months</td>
+                                <td><?= esc($project['duration']) ?></td>
                             </tr>
                             <tr>
                                 <td><strong>Project Leader</strong></td>

@@ -272,7 +272,7 @@
                                 <label class="label">Institution</label>
                                 <div class="control">
                                     <input type="text" name="name" class="input"
-                                        value="<?= $institution['name'] ?? '' ?>" required>
+                                        value="<?= $institution['name'] ?? '' ?>" readonly>
                                 </div>
                             </div>
                         </div>
@@ -329,14 +329,14 @@
 
             selectField.addEventListener("change", function () {
                 if (this.value) {
-                    inputField.value = this.value; 
-                    this.selectedIndex = 0;  
+                    inputField.value = this.value;
+                    this.selectedIndex = 0;
                 }
             });
 
             inputField.addEventListener("input", function () {
                 if (this.value === "") {
-                    selectField.selectedIndex = 0; 
+                    selectField.selectedIndex = 0;
                 }
             });
         });

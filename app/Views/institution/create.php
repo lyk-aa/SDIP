@@ -1,6 +1,10 @@
 <?= $this->extend('layouts/header-layout') ?>
 <?= $this->section('content') ?>
 
+<!-- Include Tom Select -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
 <style>
     .existing-institution-message {
         color: red;
@@ -212,7 +216,6 @@
 </style>
 
 <body>
-    <!-- Main Modal for First Transaction -->
     <div class="modal is-active" id="main-modal">
         <div class="modal-background"></div>
         <div class="modal-card">
@@ -240,17 +243,16 @@
                     </div>
 
                     <div class="columns is-multiline">
-                        <!-- Institution Select -->
+                        <!-- Institution Select with Tom Select -->
                         <div class="column is-half">
                             <div class="field">
                                 <label class="label">Institution</label>
                                 <div class="control">
-                                    <div class="select">
+                                    <div class="select is-fullwidth">
                                         <select id="institution-select" name="stakeholder_id" required>
                                             <option value="">Select Institution</option>
                                             <?php foreach ($stakeholders as $stakeholder): ?>
-                                                <option value="<?= $stakeholder['id'] ?>"><?= $stakeholder['name'] ?>
-                                                </option>
+                                                <option value="<?= $stakeholder['id'] ?>"><?= $stakeholder['name'] ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -280,7 +282,7 @@
                             </div>
                         </div>
 
-                        <!-- Description Field (Full Width) -->
+                        <!-- Description Field -->
                         <div class="column is-full">
                             <div class="field">
                                 <label class="label">Description</label>
@@ -302,6 +304,16 @@
 </body>
 
 <script>
+    // Initialize Tom Select on Institution Dropdown
+    new TomSelect("#institution-select", {
+        create: false,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+        placeholder: "Select Institution"
+    });
+
     disableSubmitButton();
 
     document.getElementById('institution-select').addEventListener('change', function () {
@@ -374,7 +386,7 @@
     document.querySelector('form').addEventListener('submit', function (event) {
         const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
         if (submitButton.disabled) {
-            event.preventDefault(); 
+            event.preventDefault();
             alert("This institution is already stored and cannot be added again.");
         }
     });
@@ -390,8 +402,29 @@
         }
     }
 
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".select-input-container").forEach(container => {
+            let inputField = container.querySelector("input");
+
+            let selectField = container.querySelector("select");
+
+            selectField.addEventListener("change", function () {
+                if (this.value) {
+                    inputField.value = this.value; 
+                    this.selectedIndex = 0;  
+                }
+            });
+
+            inputField.addEventListener("input", function () {
+                if (this.value === "") {
+                    selectField.selectedIndex = 0; 
+                }
+            });
+        });
+    });
+    
     document.getElementById("close-modal").addEventListener("click", function () {
-        window.location.href = "<?= base_url('institution/home') ?>"; 
+        window.location.href = "<?= base_url('institution/home') ?>";
     });
 </script>
 

@@ -257,8 +257,9 @@
                             <div class="field">
                                 <label class="label">Institution</label>
                                 <div class="control">
-                                    <div class="select">
-                                        <select name="institution" required>
+                                    <!-- Tom Select on the Institution Dropdown -->
+                                    <div class="select is-fullwidth">
+                                        <select id="institution-select" name="institution" required>
                                             <option value="">Select Institution</option>
                                             <?php foreach ($institutions as $institution): ?>
                                                 <option value="<?= $institution->id ?>"><?= $institution->name ?></option>
@@ -287,24 +288,18 @@
         </div>
     </div>
 
+    <!-- Add Tom Select CSS and JS -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.0.0/dist/css/tom-select.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.0.0/dist/js/tom-select.complete.min.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".select-input-container").forEach(container => {
-                let inputField = container.querySelector("input");
-                let selectField = container.querySelector("select");
-
-                selectField.addEventListener("change", function () {
-                    if (this.value) {
-                        inputField.value = this.value;  
-                        this.selectedIndex = 0; 
-                    }
-                });
-
-                inputField.addEventListener("input", function () {
-                    if (this.value === "") {
-                        selectField.selectedIndex = 0; 
-                    }
-                });
+            // Initialize Tom Select for the Institution dropdown
+            new TomSelect("#institution-select", {
+                placeholder: "Select Institution",
+                allowClear: true,
+                searchField: "name",
+                create: false
             });
 
             document.getElementById("close-modal").addEventListener("click", function () {
@@ -312,5 +307,6 @@
             });
         });
     </script>
+</body>
 
-    <?= $this->endSection() ?>
+<?= $this->endSection() ?>
