@@ -235,6 +235,25 @@
             transform: translateY(0);
         }
     }
+
+    .ts-control {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .ts-control .item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        margin-right: 5px;
+    }
+
+    .ts-control input {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
 </style>
 
 
@@ -253,7 +272,7 @@
                     <?= csrf_field() ?>
 
                     <div class="columns">
-                        <div class="column">
+                        <div class="column is-half">
                             <div class="field">
                                 <label class="label">Institution</label>
                                 <div class="control">
@@ -270,7 +289,7 @@
                             </div>
                         </div>
 
-                        <div class="column">
+                        <div class="column is-half">
                             <div class="field">
                                 <label class="label">Consortium Name</label>
                                 <div class="control">
@@ -288,22 +307,21 @@
         </div>
     </div>
 
-    <!-- Add Tom Select CSS and JS -->
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.0.0/dist/css/tom-select.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.0.0/dist/js/tom-select.complete.min.js"></script>
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Initialize Tom Select for the Institution dropdown
             new TomSelect("#institution-select", {
+                create: false, // No "Add ..." option
+                maxItems: 1,   // Single selection only
+                selectOnTab: true,
                 placeholder: "Select Institution",
-                allowClear: true,
-                searchField: "name",
-                create: false
+                onType: function (str) {
+                    // Optional: remove selection when typing starts
+                    this.clear(true);
+                }
             });
 
             document.getElementById("close-modal").addEventListener("click", function () {
-                window.location.href = "<?= base_url('institution/consortium/index') ?>"; 
+                window.location.href = "<?= base_url('institution/consortium/index') ?>";
             });
         });
     </script>

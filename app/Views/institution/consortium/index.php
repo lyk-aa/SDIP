@@ -146,7 +146,7 @@
         <div class="box mt-4">
 
             <div class="title has-text-centered">
-                <h1>DOST VI Consortium</h1>
+                <h1>Consortium Membership</h1>
             </div>
 
             <div class="buttons-container" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -173,7 +173,7 @@
                 <table class="table is-striped is-hoverable is-fullwidth">
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Consortium</th>
                             <th>Institution</th>
                             <th class="has-text-centered">Actions</th>
                         </tr>
