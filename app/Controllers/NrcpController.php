@@ -10,6 +10,8 @@ class NrcpController extends BaseController
     // Display the list of NRCP members
     public function nrcp_members()
     {
+        $data['child_page'] = 'NRCP Members';
+
         $db = \Config\Database::connect();
         $builder = $db->table('nrcp_members nrcp');
         $builder->select('

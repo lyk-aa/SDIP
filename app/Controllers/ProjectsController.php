@@ -10,6 +10,7 @@ class ProjectsController extends BaseController
     // Display the list of research projects
     public function projects()
     {
+        $data['child_page'] = 'Research Projects';
         // Connect to the database
         $db = \Config\Database::connect();
         $builder = $db->table('research_projects');

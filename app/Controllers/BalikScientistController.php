@@ -10,6 +10,8 @@ class BalikScientistController extends BaseController
     // Display list of engaged Balik Scientists with related info
     public function balik_scientist()
     {
+        $data['child_page'] = 'Balik Scientists';
+
         $db = \Config\Database::connect();
         $builder = $db->table('balik_scientist_engaged bse');
 

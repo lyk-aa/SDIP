@@ -15,6 +15,8 @@ class NgoController extends BaseController
 {
     public function businessSector()
     {
+        $data['child_page'] = 'NGO Business Sector';
+
         $stakeholdersModel = new StakeholderModel();
         $personsModel = new PersonModel();
         $contactModel = new ContactDetailsModel();

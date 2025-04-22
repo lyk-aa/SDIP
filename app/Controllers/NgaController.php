@@ -9,6 +9,8 @@ class NgaController extends BaseController
 {
     public function nga()
     {
+        $data['child_page'] = 'NGA';
+
         $db = \Config\Database::connect();
 
         $query = $db->query("

@@ -13,6 +13,8 @@ class LguController extends BaseController
 {
     public function lgu()
     {
+        $data['child_page'] = 'LGU';
+
         $stakeholdersModel = new StakeholderModel();
         $personsModel = new PersonModel();
         $contactModel = new ContactDetailsModel();

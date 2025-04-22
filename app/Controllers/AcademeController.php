@@ -13,6 +13,8 @@ class AcademeController extends BaseController
 {
     public function academes()
     {
+        $data['child_page'] = 'Academes';
+        
         $stakeholdersModel = new StakeholderModel();
         $personsModel = new PersonModel();
         $contactModel = new ContactDetailsModel();

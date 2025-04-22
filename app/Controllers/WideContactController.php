@@ -12,6 +12,8 @@ class WideContactController extends BaseController
 {
     public function wideContacts()
     {
+        $data['child_page'] = 'Wide Contacts';
+        
         return view('directory/wide_contacts/index');
     }
 }

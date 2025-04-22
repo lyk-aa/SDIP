@@ -10,6 +10,7 @@ class ConsortiumController extends BaseController
     // Display all consortiums with their associated institutions
     public function consortium()
     {
+        $data['child_page'] = 'Consortium';
         // Connect to the database
         $db = \Config\Database::connect();
         $builder = $db->table('consortium_members cm');

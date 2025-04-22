@@ -14,6 +14,8 @@ class RegionalOfficeController extends BaseController
 
     public function regionalOffices()
     {
+        $data['child_page'] = 'Regional Offices';
+        
         $db = \Config\Database::connect();
 
         $query = $db->query("
