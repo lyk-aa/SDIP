@@ -275,8 +275,11 @@
                     <div class="field">
                         <label class="label">Description</label>
                         <div class="control">
-                            <textarea name="description" class="textarea" required></textarea>
+                            <textarea name="description" class="textarea" required
+                                oninput="checkWordLimit(this, 25)"></textarea>
                         </div>
+                        <p id="word-warning" class="help is-danger" style="display: none;">You have exceeded the
+                            description-word limit.</p>
                     </div>
 
                     <!-- Footer -->
@@ -370,6 +373,28 @@
         document.getElementById("close-modal").addEventListener("click", function () {
             window.location.href = "<?= base_url('institution/balik_scientist/index') ?>";
         });
+    });
+
+    function checkWordLimit(textarea, maxWords) {
+        const words = textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
+        const warning = document.getElementById('word-warning');
+
+        if (words.length > maxWords) {
+            warning.style.display = 'block';
+        } else {
+            warning.style.display = 'none';
+        }
+    }
+
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const textarea = document.querySelector('textarea[name="description"]');
+        const words = textarea.value.trim().split(/\s+/).filter(word => word.length > 0);
+        const warning = document.getElementById('word-warning');
+
+        if (words.length > 25) {
+            e.preventDefault(); // prevent submission
+            warning.style.display = 'block';
+        }
     });
 </script>
 
