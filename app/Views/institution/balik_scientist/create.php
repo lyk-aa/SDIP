@@ -154,6 +154,25 @@
     .modal-background {
         background-color: rgba(0, 0, 0, 0.4);
     }
+
+    .ts-control {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .ts-control .item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        margin-right: 5px;
+    }
+
+    .ts-control input {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
 </style>
 
 <body>
@@ -278,7 +297,8 @@
                             <textarea name="description" class="textarea" required
                                 oninput="checkWordLimit(this, 25)"></textarea>
                         </div>
-                        <p id="word-warning" class="help is-danger" style="display: none;">You have exceeded the description-word limit.</p>
+                        <p id="word-warning" class="help is-danger" style="display: none;">You have exceeded the
+                            description-word limit.</p>
                     </div>
 
                     <!-- Footer -->
@@ -313,11 +333,9 @@
             const control = document.createElement('div');
             control.className = 'control';
 
-            const selectDiv = document.createElement('div');
-            selectDiv.className = 'select is-fullwidth';
-
             const select = document.createElement('select');
             select.name = `institution_${option.value}`;
+            select.className = 'tom-select';
 
             const defaultOption = document.createElement('option');
             defaultOption.value = '';
@@ -331,14 +349,23 @@
                 select.appendChild(opt);
             });
 
-            selectDiv.appendChild(select);
-            control.appendChild(selectDiv);
+            control.appendChild(select);
             field.appendChild(label);
             field.appendChild(control);
             column.appendChild(field);
             container.appendChild(column);
         });
+        
+        setTimeout(() => {
+            document.querySelectorAll('.tom-select').forEach(select => {
+                new TomSelect(select, {
+                    create: false,
+                    sortField: { field: "text", direction: "asc" }
+                });
+            });
+        }); 
     }
+
 
     function previewImage(event) {
         const file = event.target.files[0];
