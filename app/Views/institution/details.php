@@ -108,6 +108,14 @@
         width: 15%;
     }
 
+    .title-column {
+        width: 20%;
+    }
+
+    .small-column {
+        width: 10%;
+    }
+
     .box {
         border-radius: 12px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
@@ -252,9 +260,9 @@
                                 <thead>
                                     <tr>
                                         <th class="narrow-column">Sector</th>
-                                        <th class="wide-column">Title</th>
+                                        <th class="title-column">Title</th>
                                         <th class="wide-column">Research Objectives</th>
-                                        <th class="narrow-column">Duration</th>
+                                        <th class="small-column">Duration</th>
                                         <th class="narrow-column">Project Leader</th>
                                         <th class="narrow-column">Approved Amount</th>
                                     </tr>
@@ -268,7 +276,7 @@
                                                 <td><?= nl2br(esc($project['project_objectives'] ?? 'N/A')) ?></td>
                                                 <td><?= esc($project['duration'] ?? 'N/A') ?></td>
                                                 <td><?= esc($project['project_leader'] ?? 'N/A') ?></td>
-                                                <td><?= esc($project['approved_amount'] ?? 'N/A') ?></td>
+                                                <td>₱<?= esc($project['approved_amount'] ?? 'N/A') ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
@@ -290,9 +298,9 @@
                                 <thead>
                                     <tr>
                                         <th class="narrow-column">Sector</th>
-                                        <th class="wide-column">Title</th>
+                                        <th class="title-column">Title</th>
                                         <th class="wide-column">Research Objectives</th>
-                                        <th class="narrow-column">Duration</th>
+                                        <th class="small-column">Duration</th>
                                         <th class="narrow-column">Project Leader</th>
                                         <th class="narrow-column">Approved Amount</th>
                                     </tr>
@@ -306,7 +314,7 @@
                                                 <td><?= nl2br(esc($project['project_objectives'] ?? 'N/A')) ?></td>
                                                 <td><?= esc($project['duration'] ?? 'N/A') ?></td>
                                                 <td><?= esc($project['project_leader'] ?? 'N/A') ?></td>
-                                                <td><?= esc($project['approved_amount'] ?? 'N/A') ?></td>
+                                                <td>₱<?= esc($project['approved_amount'] ?? 'N/A') ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>

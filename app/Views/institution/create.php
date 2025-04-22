@@ -1,10 +1,6 @@
 <?= $this->extend('layouts/header-layout') ?>
 <?= $this->section('content') ?>
 
-<!-- Include Tom Select -->
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-
 <style>
     .existing-institution-message {
         color: red;
@@ -213,6 +209,26 @@
             transform: translateY(0);
         }
     }
+
+    .ts-control {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .ts-control .item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        margin-right: 5px;
+    }
+
+    .ts-control input {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
 </style>
 
 <body>
@@ -252,7 +268,8 @@
                                         <select id="institution-select" name="stakeholder_id" required>
                                             <option value="">Select Institution</option>
                                             <?php foreach ($stakeholders as $stakeholder): ?>
-                                                <option value="<?= $stakeholder['id'] ?>"><?= $stakeholder['name'] ?></option>
+                                                <option value="<?= $stakeholder['id'] ?>"><?= $stakeholder['name'] ?>
+                                                </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -306,13 +323,17 @@
 <script>
     // Initialize Tom Select on Institution Dropdown
     new TomSelect("#institution-select", {
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        },
-        placeholder: "Select Institution"
+        create: false, // No "Add ..." option
+        maxItems: 1,   // Single selection only
+        selectOnTab: true,
+        placeholder: "Select Institution",
+        onType: function (str) {
+            // Optional: remove selection when typing starts
+            this.clear(true);
+        }
     });
+
+
 
     disableSubmitButton();
 
@@ -410,19 +431,19 @@
 
             selectField.addEventListener("change", function () {
                 if (this.value) {
-                    inputField.value = this.value; 
-                    this.selectedIndex = 0;  
+                    inputField.value = this.value;
+                    this.selectedIndex = 0;
                 }
             });
 
             inputField.addEventListener("input", function () {
                 if (this.value === "") {
-                    selectField.selectedIndex = 0; 
+                    selectField.selectedIndex = 0;
                 }
             });
         });
     });
-    
+
     document.getElementById("close-modal").addEventListener("click", function () {
         window.location.href = "<?= base_url('institution/home') ?>";
     });

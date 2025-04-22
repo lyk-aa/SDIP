@@ -203,14 +203,6 @@
                 <h1>Institutions</h1>
             </div>
 
-            <!-- 🔔 Flash message for duplicate institution -->
-            <?php if (session()->has('error')): ?>
-                <div class="notification is-danger is-light">
-                    <button class="delete"></button>
-                    <?= session('error') ?>
-                </div>
-            <?php endif; ?>
-
             <div class="buttons-container" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="control has-icons-left">
                     <input id="search-input" class="input" type="text" placeholder="Search..." />
