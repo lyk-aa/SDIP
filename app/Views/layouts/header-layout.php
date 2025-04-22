@@ -21,9 +21,12 @@
     <!-- /* Style for the map container */ -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+    <!-- Add Tom Select CSS and JS -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.0.0/dist/css/tom-select.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.0.0/dist/js/tom-select.complete.min.js"></script>
+
 
     <style>
- 
         .tabs-container {
             display: flex;
             flex-direction: column;
@@ -59,15 +62,31 @@
     </style>
 
 </head>
+
 <body>
     <div class="container">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-            <ul class="breadcrumb-list">
-                <li><a href="<?= base_url('home') ?>">Home</a></li>
-                <li><a href="<?= base_url('directory/home') ?>">Directory</a></li>
-                <li><a href="<?= base_url('institution/home') ?>" aria-current="page">Institution</a></li>
-            </ul>
+        <nav class="breadcrumb is-flex is-justify-content-space-between is-align-items-center" aria-label="breadcrumbs">
+            <div class="is-flex is-align-items-center">
+                <ul class="breadcrumb-list mb-0">
+                    <?php if (!isset($child_page)): ?>
+                        <!-- Only Institution shown on the main page -->
+                        <li><a href="<?= base_url('institution/home') ?>" aria-current="page">Institution</a></li>
+                    <?php else: ?>
+                        <li><a href="<?= base_url('institution/home') ?>">Institution</a></li>
+                        <li><a href="<?= current_url() ?>" aria-current="page"><?= esc($child_page) ?></a></li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+
+            <!-- Back to Home Button on the right -->
+            <div>
+                <a href="<?= base_url('home') ?>" class="button is-link is-small is-primary">
+                    <span class="icon mr-1"><i class="fas fa-circle-left"></i></span>
+                    <span>Back to Home</span>
+                </a>
+            </div>
         </nav>
+
 
         <!-- Tabs Navigation -->
         <div class="tabs is-boxed">

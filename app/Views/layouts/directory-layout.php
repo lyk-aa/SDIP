@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,57 +19,70 @@
     <link rel="stylesheet" href="/css/styles.css">
 
     <style>
-            #map {
+        #map {
             height: 500px;
             width: 100%;
             border-radius: 8px;
             margin-top: 20px;
         }
-
     </style>
 </head>
 
 <body>
-<div class="container">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-            <ul class="breadcrumb-list">
-                <li class=""><a href="<?= base_url('home') ?>">Home</a></li>
-                <li><a href="<?= base_url('directory/home') ?>">Directory</a></li>
-                <li><a href="<?= base_url('institution/home') ?>" aria-current="page">Institution</a></li>
+    <div class="container">
+        <nav class="breadcrumb is-flex is-justify-content-space-between is-align-items-center" aria-label="breadcrumbs">
+            <!-- Breadcrumb Links -->
+            <ul class="breadcrumb-list mb-0">
+                <?php if (!isset($child_page)): ?>
+                    <!-- Main directory page -->
+                    <li><a href="<?= base_url('directory/home') ?>" aria-current="page">Directory</a></li>
+                <?php else: ?>
+                    <!-- Subpages -->
+                    <li><a href="<?= base_url('directory/home') ?>">Directory</a></li>
+                    <li><a href="<?= current_url() ?>" aria-current="page"><?= esc($child_page) ?></a></li>
+                <?php endif; ?>
             </ul>
+
+            <!-- Back to Home Button -->
+            <div>
+                <a href="<?= base_url('home') ?>" class="button is-link is-small is-primary">
+                    <span class="icon mr-1"><i class="fas fa-circle-left"></i></span>
+                    <span>Back to Home</span>
+                </a>
+            </div>
         </nav>
 
-    <div class="columns is-vcentered is-mobile px-4 py-3">
-        <!-- Dropdown -->
-        <div class="field mr-4">
-            <label class="label has-text-weight-semibold">Select Category</label>
-            <div class="control">
-                <div class="select is-semi-medium is-fullwidth">
-                    <select id="categoryDropdown" onchange="navigateToCategory()">
-                        <option value="<?= base_url('directory/home') ?>">All</option>
-                        <option value="<?= base_url('directory/regional_offices') ?>">Regional Offices</option>
-                        <option value="<?= base_url('directory/nga') ?>">NGA</option>
-                        <option value="<?= base_url('directory/academes') ?>">Academes</option>
-                        <option value="<?= base_url('directory/lgus') ?>">LGUs</option>
-                        <option value="<?= base_url('directory/business_sector') ?>">NGO Business Sector</option>
-                        <option value="<?= base_url('directory/wide_contacts') ?>">DOST Wide-Contacts</option>
-                    </select>
+        <div class="columns is-vcentered is-mobile px-4 py-3">
+            <!-- Dropdown -->
+            <div class="field mr-4">
+                <label class="label has-text-weight-semibold">Select Category</label>
+                <div class="control">
+                    <div class="select is-semi-medium is-fullwidth">
+                        <select id="categoryDropdown" onchange="navigateToCategory()">
+                            <option value="<?= base_url('directory/home') ?>">All</option>
+                            <option value="<?= base_url('directory/regional_offices') ?>">Regional Offices</option>
+                            <option value="<?= base_url('directory/nga') ?>">NGA</option>
+                            <option value="<?= base_url('directory/academes') ?>">Academes</option>
+                            <option value="<?= base_url('directory/lgus') ?>">LGUs</option>
+                            <option value="<?= base_url('directory/business_sector') ?>">NGO Business Sector</option>
+                            <option value="<?= base_url('directory/wide_contacts') ?>">DOST Wide-Contacts</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Buttons and Search -->
-        <div class="column is-flex is-justify-content-flex-end is-align-items-center">
-            <div class="control has-icons-left mx-2">
-                <input class="input" type="text" placeholder="Search">
-                <span class="icon is-small is-left no-bg">
-                    <i class="fas fa-search"></i>
-                </span>
+            <!-- Buttons and Search -->
+            <div class="column is-flex is-justify-content-flex-end is-align-items-center">
+                <div class="control has-icons-left mx-2">
+                    <input class="input" type="text" placeholder="Search">
+                    <span class="icon is-small is-left no-bg">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+                <button class="button is-outlined">Filter</button>
             </div>
-            <button class="button is-outlined">Filter</button>
-        </div>
-    </div> <!-- Properly closed main layout div -->
-</div>
+        </div> <!-- Properly closed main layout div -->
+    </div>
     <!-- Main Content Section -->
     <main>
         <?= $this->renderSection('content') ?>
@@ -84,4 +98,5 @@
     </script>
 
 </body>
+
 </html>
