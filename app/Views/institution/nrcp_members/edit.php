@@ -263,7 +263,7 @@
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Edit Balik Scientist</p>
+                <p class="modal-card-title">Edit NCRP Member</p>
                 <button class="delete" id="close-modal" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
