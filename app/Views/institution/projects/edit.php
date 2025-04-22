@@ -235,6 +235,25 @@
             transform: translateY(0);
         }
     }
+
+    .ts-control {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .ts-control .item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        margin-right: 5px;
+    }
+
+    .ts-control input {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
 </style>
 
 <body>
@@ -284,12 +303,12 @@
                         </div>
 
                         <!-- Institution -->
-                        <div class="column">
+                        <div class="column is-one-third">
                             <div class="field">
                                 <label class="label">Institution</label>
                                 <div class="control">
                                     <div class="select is-fullwidth">
-                                        <select name="institution" required>
+                                        <select id="institution-select" name="institution" required>
                                             <option value="">Select Institution</option>
                                             <?php foreach ($institutions as $institution): ?>
                                                 <option value="<?= $institution->id ?>"
@@ -414,6 +433,17 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#institution-select", {
+            create: false, // No "Add ..." option
+            maxItems: 1,   // Single selection only
+            selectOnTab: true,
+            placeholder: "Select Institution",
+            onType: function (str) {
+                // Optional: remove selection when typing starts
+                this.clear(true);
+            }
+        });
+
         document.querySelectorAll(".select-input-container").forEach(container => {
             let inputField = container.querySelector("input");
             let selectField = container.querySelector("select");

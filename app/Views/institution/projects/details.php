@@ -12,12 +12,6 @@
 
 <body>
     <div class="container">
-        <?php if (session()->getFlashdata('error')): ?>
-            <div class="notification is-danger">
-                <?= session()->getFlashdata('error') ?>
-            </div>
-        <?php endif; ?>
-
         <?php if ($project): ?>
             <div class="card">
                 <div class="card-content">
