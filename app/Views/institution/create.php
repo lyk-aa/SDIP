@@ -16,12 +16,27 @@
         padding: 0.75rem 1rem;
     }
 
+    .modal-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #888;
+    }
+
+    .modal-close-btn:hover {
+        color: #000000;
+    }
+
     .modal-card-title {
         font-weight: 600;
         text-align: center;
         font-size: 1.25rem;
         color: #363636;
-        margin: 0;
+        margin-bottom: 20px;
     }
 
     .modal-card-body {
@@ -228,18 +243,19 @@
         flex: 1 1 auto;
         min-width: 0;
     }
-
 </style>
 
 <body>
     <div class="modal is-active" id="main-modal">
         <div class="modal-background"></div>
         <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Add Institution</p>
-                <button class="delete" id="close-modal" aria-label="close"></button>
-            </header>
             <section class="modal-card-body">
+                <p class="modal-card-title">Add Institution</p>
+
+                <button class="modal-close-btn" id="close-modal" aria-label="close">
+                    <i class="fas fa-times"></i> 
+                </button>
+
                 <form id="stakeholder-form" action="<?= site_url('institution/store') ?>" method="post"
                     enctype="multipart/form-data">
                     <?= csrf_field() ?>
@@ -311,7 +327,7 @@
                         </div>
                     </div>
 
-                    <section class="modal-card-foot has-text-right">
+                    <section class="has-text-right">
                         <button type="submit" class="button is-success" id="submit-button" disabled>Save</button>
                     </section>
                 </form>
@@ -333,13 +349,11 @@
         }
     });
 
-
-
     disableSubmitButton();
 
     document.getElementById('institution-select').addEventListener('change', function () {
         let stakeholderId = this.value;
-        const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+        const submitButton = document.querySelector('section.has-text-right button[type="submit"]');
 
         submitButton.removeAttribute('title');
         submitButton.style.backgroundColor = '';
@@ -372,7 +386,7 @@
     });
 
     function disableSubmitButton() {
-        const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+        const submitButton = document.querySelector('section.has-text-right button[type="submit"]');
         submitButton.disabled = true;
         submitButton.style.backgroundColor = 'gray';
         submitButton.style.cursor = 'not-allowed';
@@ -380,7 +394,7 @@
     }
 
     function showWarningMessage(message) {
-        const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+        const submitButton = document.querySelector('section.has-text-right button[type="submit"]');
         submitButton.disabled = true;
         submitButton.style.backgroundColor = 'gray';
         submitButton.style.cursor = 'not-allowed';
@@ -394,7 +408,7 @@
     }
 
     function enableSubmitButton() {
-        const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+        const submitButton = document.querySelector('section.has-text-right button[type="submit"]');
         submitButton.disabled = false;
         submitButton.style.backgroundColor = '';
         submitButton.style.cursor = '';
@@ -405,7 +419,7 @@
     }
 
     document.querySelector('form').addEventListener('submit', function (event) {
-        const submitButton = document.querySelector('section.modal-card-foot button[type="submit"]');
+        const submitButton = document.querySelector('section.has-text-right button[type="submit"]');
         if (submitButton.disabled) {
             event.preventDefault();
             alert("This institution is already stored and cannot be added again.");

@@ -10,12 +10,27 @@
         padding: 0.75rem 1rem;
     }
 
+    .modal-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #888;
+    }
+
+    .modal-close-btn:hover {
+        color: #000000;
+    }
+
     .modal-card-title {
         font-weight: 600;
         text-align: center;
         font-size: 1.25rem;
         color: #363636;
-        margin: 0;
+        margin-bottom: 20px;
     }
 
     .modal-card-body {
@@ -180,12 +195,13 @@
     <div class="modal is-active" id="main-modal">
         <div class="modal-background"></div>
         <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Add NRCP Member</p>
-                <button class="delete" id="close-modal" aria-label="close"></button>
-            </header>
-
             <section class="modal-card-body">
+                <p class="modal-card-title">Add NRCP Member</p>
+
+                <button class="modal-close-btn" id="close-modal" aria-label="close">
+                    <i class="fas fa-times"></i>
+                </button>
+
                 <form id="balik-scientist-form" action="<?= site_url('/institution/nrcp_members/store') ?>"
                     method="post" enctype="multipart/form-data">
                     <?= csrf_field() ?>
@@ -302,9 +318,9 @@
                     </div>
 
                     <!-- Footer -->
-                    <footer class="modal-card-foot is-flex is-justify-content-end">
-                        <button type="submit" class="button is-success">Save</button>
-                    </footer>
+                    <section class="has-text-right">
+                        <button type="submit" class="button is-success" id="submit-button">Save</button>
+                    </section>
                 </form>
             </section>
         </div>
@@ -355,7 +371,7 @@
             column.appendChild(field);
             container.appendChild(column);
         });
-        
+
         setTimeout(() => {
             document.querySelectorAll('.tom-select').forEach(select => {
                 new TomSelect(select, {
@@ -363,7 +379,7 @@
                     sortField: { field: "text", direction: "asc" }
                 });
             });
-        }); 
+        });
     }
 
     function previewImage(event) {

@@ -10,12 +10,27 @@
         padding: 0.75rem 1rem;
     }
 
+    .modal-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #888;
+    }
+
+    .modal-close-btn:hover {
+        color: #000000;
+    }
+
     .modal-card-title {
         font-weight: 600;
         text-align: center;
         font-size: 1.25rem;
         color: #363636;
-        margin: 0;
+        margin-bottom: 20px;
     }
 
     .modal-card-body {
@@ -262,11 +277,13 @@
     <div class="modal is-active" id="main-modal">
         <div class="modal-background"></div>
         <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Edit NCRP Member</p>
-                <button class="delete" id="close-modal" aria-label="close"></button>
-            </header>
             <section class="modal-card-body">
+                <p class="modal-card-title">Edit NRCP Members</p>
+
+                <button class="modal-close-btn" id="close-modal" aria-label="close">
+                    <i class="fas fa-times"></i>
+                </button>
+
                 <form id="balik-scientist-form"
                     action="<?= site_url('/institution/nrcp_members/update/' . $nrcp['id']) ?>" method="post"
                     enctype="multipart/form-data">
@@ -383,9 +400,9 @@
                         </div>
                     </div>
 
-                    <footer class="modal-card-foot is-flex is-justify-content-end">
-                        <button type="submit" class="button is-success">Update</button>
-                    </footer>
+                    <section class="has-text-right">
+                        <button type="submit" class="button is-success" id="submit-button">Update</button>
+                    </section>
                 </form>
             </section>
         </div>
@@ -408,15 +425,15 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         new TomSelect("#institution-select", {
-                create: false, // No "Add ..." option
-                maxItems: 1,   // Single selection only
-                selectOnTab: true,
-                placeholder: "Select Institution",
-                onType: function (str) {
-                    // Optional: remove selection when typing starts
-                    this.clear(true);
-                }
-            });
+            create: false, // No "Add ..." option
+            maxItems: 1,   // Single selection only
+            selectOnTab: true,
+            placeholder: "Select Institution",
+            onType: function (str) {
+                // Optional: remove selection when typing starts
+                this.clear(true);
+            }
+        });
         document.querySelectorAll(".select-input-container").forEach(container => {
             let inputField = container.querySelector("input");
             let selectField = container.querySelector("select");
