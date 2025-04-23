@@ -103,8 +103,8 @@ $routes->get('/institution/research_centers', 'ResearchCentersController::resear
 
 
 $routes->get('institution/research_centers/index', 'ResearchCentersController::index');
-$routes->get('institution/research_centers/create', 'ResearchCentersController::create');
+$routes->get('institution/research-centers/create', 'ResearchCentersController::create');
 $routes->get('institution/research_centers/edit/(:num)', 'ResearchCentersController::edit/$1');
 $routes->get('institution/research_centers/delete/(:num)', 'ResearchCentersController::delete/$1');
 $routes->get('institution/research_centers/search', 'ResearchCentersController::search');
-
+$routes->post('/institution/research_centers/store', 'ResearchCentersController::store');
