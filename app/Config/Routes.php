@@ -96,3 +96,11 @@ $routes->get('institution/consortium/search', 'ConsortiumController::search');
 
 $routes->get('/institution/ncrp_members', 'NcrpController::ncrp_members');
 $routes->get('/institution/research_centers', 'ResearchCentersController::research_centers');
+
+
+$routes->get('institution/research_centers/index', 'ResearchCentersController::index');
+$routes->get('institution/research_centers/create', 'ResearchCentersController::create');
+$routes->get('institution/research_centers/edit/(:num)', 'ResearchCentersController::edit/$1');
+$routes->get('institution/research_centers/delete/(:num)', 'ResearchCentersController::delete/$1');
+$routes->get('institution/research_centers/search', 'ResearchCentersController::search');
+
