@@ -321,6 +321,7 @@ class InstitutionController extends BaseController
 
         // Return the view with all the institution's details
         return view('institution/details', [
+            'details_id' => $id,
             'institution' => $institution,
             'nrcp_members' => $nrcp_members,
             'balik_scientists' => $balik_scientists,
@@ -358,5 +359,17 @@ class InstitutionController extends BaseController
 
         // Execute the query and return results
         return $this->response->setJSON($builder->get()->getResultArray());
+    }
+
+    // Print All Institutions
+    public function printAllInstitutions() 
+    {    
+        return view('institution/print_all_institutions');
+    }
+
+    // Print Details
+    public function printDetails($id) 
+    {    
+        return view('institution/print_details');
     }
 }

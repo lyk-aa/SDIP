@@ -180,7 +180,7 @@
                             </select>
                         </div>
 
-                        <button class="button is-light is-small">
+                        <button class="button is-light is-small" onclick="printDetails('<?= site_url('institution/view/print/' . $details_id) ?>')">
                             <span class="icon"><i class="fas fa-download"></i></span>
                             <span>Download</span>
                         </button>
@@ -357,6 +357,22 @@
             let section = document.getElementById(selectedValue);
             if (section) section.classList.add('show');
         }
+    }
+
+    function printDetails(url) {
+        const printWindow = window.open( url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
+
+        printWindow.addEventListener('load', () => {
+            if (Boolean(printWindow.chrome)) {
+                printWindow.print();
+                setTimeout(function(){
+                    printWindow.close();
+                }, 500);
+            } else {
+                printWindow.print();
+                printWindow.close();
+            }
+        }, true);
     }
 
     window.onload = navigateToCategory;

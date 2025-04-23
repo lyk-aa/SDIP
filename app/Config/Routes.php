@@ -39,12 +39,14 @@ $routes->get('/directory/wide_contacts', 'WideContactController::wideContacts');
 
 // Institution Main //
 $routes->get('/institution/home', 'InstitutionController::index');
+$routes->get('/institution/home/print/print_all_institutions', 'InstitutionController::printAllInstitutions');
 $routes->get('/institution/create', 'InstitutionController::create_institution');
 $routes->post('/institution/store', 'InstitutionController::storeInstitution');
 $routes->get('/institution/edit/(:num)', 'InstitutionController::edit/$1');
 $routes->post('/institution/update/(:num)', 'InstitutionController::update/$1');
 $routes->get('/institution/delete/(:num)', 'InstitutionController::delete/$1');
 $routes->get('institution/view/(:num)', 'InstitutionController::view/$1');
+$routes->get('institution/view/print/(:num)', 'InstitutionController::printDetails/$1');
 $routes->get('institution/getStakeholderDetails/(:num)', 'InstitutionController::getStakeholderDetails/$1');
 $routes->get('institution/search', 'InstitutionController::search');
 
