@@ -274,4 +274,10 @@ class ProjectsController extends BaseController
             'projects' => $formattedProjects
         ]);
     }
+
+    // Print Projects
+    public function printProjects()
+    {
+        return view('institution/projects/print_projects');
+    }
 }

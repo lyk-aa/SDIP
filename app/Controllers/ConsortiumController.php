@@ -196,4 +196,10 @@ class ConsortiumController extends BaseController
         // Return the search results as JSON
         return $this->response->setJSON($consortiums);
     }
+
+    // Print Consortium
+    public function printConsortium()
+    {
+        return view('institution/consortium/print_consortium');
+    }
 }
