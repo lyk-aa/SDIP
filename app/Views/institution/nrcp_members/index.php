@@ -262,7 +262,7 @@
                     <span>Create New</span>
                 </a>
 
-                <button class="button is-light">
+                <button class="button is-light" onclick="printNrcpMembers('<?= site_url('institution/nrcp_members/print') ?>')">
                     <span class="icon"><i class="fas fa-download"></i></span>
                 </button>
             </div>
@@ -397,6 +397,22 @@
             });
         });
     });
+
+    function printNrcpMembers(url) {
+        const printWindow = window.open( url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
+
+        printWindow.addEventListener('load', () => {
+            if (Boolean(printWindow.chrome)) {
+                printWindow.print();
+                setTimeout(function(){
+                    printWindow.close();
+                }, 500);
+            } else {
+                printWindow.print();
+                printWindow.close();
+            }
+        }, true);
+    }
 </script>
 
 <?= $this->endSection() ?>

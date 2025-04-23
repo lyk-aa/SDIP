@@ -54,6 +54,7 @@ $routes->get('institution/search', 'InstitutionController::search');
 
 //Institution Projects//
 $routes->get('/institution/projects/index', 'ProjectsController::projects');
+$routes->get('/institution/projects/print', 'ProjectsController::printProjects');
 $routes->get('/institution/projects/create', 'ProjectsController::create');
 $routes->post('/institution/projects/store', 'ProjectsController::storeProjects');
 $routes->get('/institution/projects/edit/(:num)', 'ProjectsController::edit/$1');
@@ -65,6 +66,7 @@ $routes->post('institution/projects/search', 'ProjectsController::search');
 
 //Institution Balik Scientist//
 $routes->get('/institution/balik_scientist/index', 'BalikScientistController::balik_scientist');
+$routes->get('/institution/balik_scientist/print', 'BalikScientistController::printBalikScientist');
 $routes->get('/institution/balik_scientist/create', 'BalikScientistController::create');
 $routes->post('/institution/balik_scientist/store', 'BalikScientistController::store');
 $routes->get('/institution/balik_scientist/edit/(:num)', 'BalikScientistController::edit/$1');
@@ -76,6 +78,7 @@ $routes->post('institution/balik_scientist/search', 'BalikScientistController::s
 
 //Instutions NRCP
 $routes->get('/institution/nrcp_members/index', 'NrcpController::nrcp_members');
+$routes->get('/institution/nrcp_members/print', 'NrcpController::printNrcp');
 $routes->get('/institution/nrcp_members/create', 'NrcpController::create');
 $routes->post('/institution/nrcp_members/store', 'NrcpController::store');
 $routes->get('/institution/nrcp_members/edit/(:num)', 'NrcpController::edit/$1');
@@ -86,6 +89,7 @@ $routes->post('institution/nrcp_members/search', 'NrcpController::search');
 
 //Institutions Consorsium
 $routes->get('/institution/consortium/index', 'ConsortiumController::consortium');
+$routes->get('/institution/consortium/print', 'ConsortiumController::printConsortium');
 $routes->get('/institution/consortium/create', 'ConsortiumController::create');
 $routes->post('/institution/consortium/store', 'ConsortiumController::store');
 $routes->get('/institution/consortium/edit/(:num)', 'ConsortiumController::edit/$1');
