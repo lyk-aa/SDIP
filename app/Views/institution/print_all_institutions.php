@@ -19,84 +19,97 @@
 
 <h1>All Institutions and Their Data</h1>
 
-<?php if (!empty($institutions)): ?>
-    <?php foreach ($institutions as $institution): ?>
-        <div class="institution">
-            <h2><?= esc($institution['description']) ?></h2>
-
-            <!-- Balik Scientists -->
-            <div class="section">
-                <h3>Balik Scientists</h3>
-                <?php if (!empty($institution['balik_scientists'])): ?>
-                    <?php foreach ($institution['balik_scientists'] as $bs): ?>
-                        <div class="entity">
-                            <strong>Name:</strong> <?= esc($bs['name']) ?><br>
-                            <strong>Description:</strong> <?= esc($bs['description']) ?>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No Balik Scientists found.</p>
-                <?php endif; ?>
+<?php foreach ($allInstitutionDetails as $details): ?>
+    <div id="details">
+        <h2>Institution: <?= $details['institution']['name'] ?></h2>
+        <div class="columns">
+            <div class="column is-6">
+                <p><strong>Type:</strong> <?= $details['institution']['type'] ?></p>
+                <p><strong>Person Name:</strong> <?= $details['institution']['person_name'] ?></p>
+                <p><strong>Designation:</strong> <?= $details['institution']['designation'] ?></p>
             </div>
-
-            <!-- NCRP Members -->
-            <div class="section">
-                <h3>NCRP Members</h3>
-                <?php if (!empty($institution['ncrp_members'])): ?>
-                    <?php foreach ($institution['ncrp_members'] as $member): ?>
-                        <div class="entity">
-                            <strong>Name:</strong> <?= esc($member['name']) ?><br>
-                            <strong>Description:</strong> <?= esc($member['description']) ?>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No NCRP Members found.</p>
-                <?php endif; ?>
+            <div class="column is-6">
+                <p><strong>Address:</strong> <?= $details['institution']['street'] ?>,
+                    <?= $details['institution']['barangay'] ?>, <?= $details['institution']['municipality'] ?>,
+                    <?= $details['institution']['province'] ?>, <?= $details['institution']['country'] ?>
+                </p>
+                <p><strong>Telephone:</strong> <?= $details['institution']['telephone_num'] ?></p>
+                <p><strong>Email:</strong> <?= $details['institution']['email_address'] ?></p>
             </div>
-
-            <!-- Research Projects -->
-            <div class="section">
-                <h3>R&D Projects</h3>
-                <?php if (!empty($institution['research_projects'])): ?>
-                    <?php foreach ($institution['research_projects'] as $proj): ?>
-                        <div class="entity">
-                            <strong>Name:</strong> <?= esc($proj['name']) ?><br>
-                            <strong>Leader:</strong> <?= esc($proj['project_leader']) ?><br>
-                            <strong>Description:</strong> <?= esc($proj['description']) ?><br>
-                            <strong>Objectives:</strong> <?= esc($proj['project_objectives']) ?><br>
-                            <strong>Status:</strong> <?= esc($proj['status']) ?><br>
-                            <strong>Approved Amount:</strong> <?= esc($proj['approved_amount']) ?><br>
-                            <strong>Duration:</strong> <?= esc($proj['duration']) ?>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No R&D Projects found.</p>
-                <?php endif; ?>
-            </div>
-
-            <!-- Research Centers (future-proofing) -->
-            <div class="section">
-                <h3>Research Centers</h3>
-                <?php if (!empty($institution['research_centers'])): ?>
-                    <?php foreach ($institution['research_centers'] as $center): ?>
-                        <div class="entity">
-                            <strong>Name:</strong> <?= esc($center['name']) ?><br>
-                            <strong>Description:</strong> <?= esc($center['description']) ?>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No Research Centers available.</p>
-                <?php endif; ?>
-            </div>
-
-            <hr>
         </div>
-    <?php endforeach; ?>
-<?php else: ?>
-    <p>No institutions found.</p>
-<?php endif; ?>
+    </div>
 
-<button id="printButton" onclick="window.print()">Print This Page</button>
+    <h3>Ongoing Research Projects:</h3>
+    <div id="projects" class="section-content">
+        <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th class="narrow-column">Sector</th>
+                    <th class="title-column">Title</th>
+                    <th class="wide-column">Research Objectives</th>
+                    <th class="small-column">Duration</th>
+                    <th class="narrow-column">Project Leader</th>
+                    <th class="narrow-column">Approved Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($details['ongoing_research_projects'])): ?>
+                    <?php foreach ($details['ongoing_research_projects'] as $project): ?>
+                        <tr>
+                            <td><?= esc($project['sector'] ?? 'N/A') ?></td>
+                            <td><?= esc($project['research_project_name'] ?? 'N/A') ?></td>
+                            <td><?= nl2br(esc($project['project_objectives'] ?? 'N/A')) ?></td>
+                            <td><?= esc($project['duration'] ?? 'N/A') ?></td>
+                            <td><?= esc($project['project_leader'] ?? 'N/A') ?></td>
+                            <td>₱<?= esc($project['approved_amount'] ?? 'N/A') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="6" class="has-text-centered has-text-grey-light">
+                            No ongoing projects
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 
+    <h3>Completed Research Projects:</h3>
+    <div id="completed_projects" class="section-content">
+        <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th class="narrow-column">Sector</th>
+                    <th class="title-column">Title</th>
+                    <th class="wide-column">Research Objectives</th>
+                    <th class="small-column">Duration</th>
+                    <th class="narrow-column">Project Leader</th>
+                    <th class="narrow-column">Approved Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($details['completed_research_projects'])): ?>
+                    <?php foreach ($details['completed_research_projects'] as $project): ?>
+                        <tr>
+                            <td><?= esc($project['sector'] ?? 'N/A') ?></td>
+                            <td><?= esc($project['research_project_name'] ?? 'N/A') ?></td>
+                            <td><?= nl2br(esc($project['project_objectives'] ?? 'N/A')) ?></td>
+                            <td><?= esc($project['duration'] ?? 'N/A') ?></td>
+                            <td><?= esc($project['project_leader'] ?? 'N/A') ?></td>
+                            <td>₱<?= esc($project['approved_amount'] ?? 'N/A') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="6" class="has-text-centered has-text-grey-light">
+                            No completed projects
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endforeach; ?>
 </body>
 </html>
