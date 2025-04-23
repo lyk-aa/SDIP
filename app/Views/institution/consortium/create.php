@@ -36,6 +36,18 @@
     .modal-card-body {
         padding: 1.5rem;
         background-color: #fff;
+        overflow: visible !important;
+        position: relative;
+    }
+
+    .modal-card {
+        max-height: 90vh;
+        overflow: visible;
+    }
+
+    .ts-dropdown {
+        z-index: 1000 !important;
+        position: absolute !important;
     }
 
     .image-placeholder {

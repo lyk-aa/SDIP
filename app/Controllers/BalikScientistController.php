@@ -85,7 +85,7 @@ class BalikScientistController extends BaseController
             ->getRow();
 
         if ($existingPerson) {
-            return redirect()->back()->withInput()->with('error', 'This person already exists in the system.');
+            return redirect()->back()->withInput()->with('bs-error', 'This person already exists in the system.');
         }
 
         // Insert new person into the persons table
@@ -128,7 +128,7 @@ class BalikScientistController extends BaseController
             }
         }
 
-        return redirect()->to('/institution/balik_scientist/index')->with('success', 'Scientist added successfully!');
+        return redirect()->to('/institution/balik_scientist/index')->with('bs-success', 'Scientist added successfully!');
     }
 
     // Show form to edit an existing Balik Scientist
@@ -149,7 +149,7 @@ class BalikScientistController extends BaseController
             ->getRowArray();
 
         if (!$scientist) {
-            return redirect()->to('/institution/balik_scientist')->with('error', 'Scientist not found.');
+            return redirect()->to('/institution/balik_scientist')->with('bs-error', 'Scientist not found.');
         }
 
         // Get list of active institutions
@@ -175,7 +175,7 @@ class BalikScientistController extends BaseController
         // Get existing scientist record
         $existingScientist = $db->table('balik_scientist_engaged')->where('id', $id)->get()->getRowArray();
         if (!$existingScientist) {
-            return redirect()->to('/institution/balik_scientist')->with('error', 'Scientist not found.');
+            return redirect()->to('/institution/balik_scientist')->with('bs-error', 'Scientist not found.');
         }
 
         // Update person's data
@@ -208,7 +208,7 @@ class BalikScientistController extends BaseController
         ];
         $db->table('balik_scientist_engaged')->where('id', $id)->update($scientistData);
 
-        return redirect()->to('/institution/balik_scientist/index')->with('success', 'Scientist updated successfully.');
+        return redirect()->to('/institution/balik_scientist/index')->with('bs-success', 'Scientist updated successfully.');
     }
 
     // Delete a Balik Scientist
@@ -219,12 +219,12 @@ class BalikScientistController extends BaseController
         // Find scientist record
         $scientist = $db->table('balik_scientist_engaged')->where('id', $id)->get()->getRowArray();
         if (!$scientist) {
-            return redirect()->to('/institution/balik_scientist')->with('error', 'Scientist not found.');
+            return redirect()->to('/institution/balik_scientist')->with('bs-error', 'Scientist not found.');
         }
 
         // Delete record
         $db->table('balik_scientist_engaged')->where('id', $id)->delete();
-        return redirect()->to('/institution/balik_scientist/index')->with('success', 'Scientist deleted successfully.');
+        return redirect()->to('/institution/balik_scientist/index')->with('bs-success', 'Scientist deleted successfully.');
     }
 
     // View detailed information about a Balik Scientist

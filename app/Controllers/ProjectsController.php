@@ -83,7 +83,7 @@ class ProjectsController extends BaseController
         $db->table('research_projects')->insert($researchData);
 
         // Redirect with success message
-        return redirect()->to('/institution/projects/index')->with('success', 'Project added successfully!');
+        return redirect()->to('/institution/projects/index')->with('project-success', 'Project added successfully!');
     }
 
     // Show the form to edit an existing research project
@@ -104,7 +104,7 @@ class ProjectsController extends BaseController
 
         // Check if the project exists, if not, redirect with an error message
         if (!$project) {
-            return redirect()->to('/institution/projects')->with('error', 'Project not found.');
+            return redirect()->to('/institution/projects')->with('project-error', 'Project not found.');
         }
 
         // Fetch all active institutions for the dropdown
@@ -128,7 +128,7 @@ class ProjectsController extends BaseController
         // Fetch the existing project details to check if it exists
         $existingScientist = $db->table('research_projects')->where('id', $id)->get()->getRowArray();
         if (!$existingScientist) {
-            return redirect()->to('/institution/projects')->with('error', 'Project not found.');
+            return redirect()->to('/institution/projects')->with('project-error', 'Project not found.');
         }
 
         // Prepare the updated project data
@@ -149,28 +149,18 @@ class ProjectsController extends BaseController
         $db->table('research_projects')->where('id', $id)->update($data);
 
         // Redirect with success message
-        return redirect()->to('/institution/projects/index')->with('success', 'Project updated successfully.');
+        return redirect()->to('/institution/projects/index')->with('project-success', 'Project updated successfully.');
     }
 
     // Delete a research project from the database
     public function delete($id)
     {
-        // Connect to the database
         $db = \Config\Database::connect();
+        $builder = $db->table('research_projects');
+        $builder->where('id', $id);
+        $builder->delete();
 
-        // Fetch the project to check if it exists
-        $project = $db->table('research_projects')->where('id', $id)->get()->getRowArray();
-
-        // If the project does not exist, return a JSON response with an error message
-        if (!$project) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Project not found.']);
-        }
-
-        // Delete the project from the database
-        $db->table('research_projects')->where('id', $id)->delete();
-
-        // Return a success response
-        return $this->response->setJSON(['success' => true, 'message' => 'Project deleted successfully.']);
+        return redirect()->to('/institution/projects/index')->with('project-success', 'Project deleted successfully!');
     }
 
     // View the details of a specific research project
@@ -191,7 +181,7 @@ class ProjectsController extends BaseController
 
         // If the project does not exist, redirect with an error message
         if (!$project) {
-            return redirect()->to('/institution/projects')->with('error', 'Project not found.');
+            return redirect()->to('/institution/projects')->with('project-error', 'Project not found.');
         }
 
         // Return the view with project details

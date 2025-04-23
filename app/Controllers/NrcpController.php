@@ -83,7 +83,7 @@ class NrcpController extends BaseController
             ->getRow();
 
         if ($existingPerson) {
-            return redirect()->back()->with('error', 'Person already exists.');
+            return redirect()->back()->with('nrcp-error', 'Person already exists.');
         }
 
         // Insert the new person
@@ -126,7 +126,7 @@ class NrcpController extends BaseController
             }
         }
 
-        return redirect()->to('/institution/nrcp_members/index')->with('success', 'NRCP added successfully!');
+        return redirect()->to('/institution/nrcp_members/index')->with('nrcp-success', 'NRCP added successfully!');
     }
 
     // Delete an NRCP member by their ID
@@ -137,7 +137,7 @@ class NrcpController extends BaseController
         $builder->where('id', $id);
         $builder->delete();
 
-        return redirect()->to('/institution/nrcp_members/index')->with('success', 'NRCP deleted successfully!');
+        return redirect()->to('/institution/nrcp_members/index')->with('nrcp-success', 'NRCP deleted successfully!');
     }
 
     // View details of an individual NRCP member
@@ -176,7 +176,7 @@ class NrcpController extends BaseController
             ->getRowArray();
 
         if (!$nrcp) {
-            return redirect()->to('/institution/nrcp_members')->with('error', 'NRCP not found.');
+            return redirect()->to('/institution/nrcp_members')->with('nrcp-error', 'NRCP not found.');
         }
 
         $institutions = $db->table('institutions i')
@@ -201,7 +201,7 @@ class NrcpController extends BaseController
         // Fetch the existing NRCP data
         $existingnrcp = $db->table('nrcp_members')->where('id', $id)->get()->getRowArray();
         if (!$existingnrcp) {
-            return redirect()->to('/institution/nrcp')->with('error', 'NRCP not found.');
+            return redirect()->to('/institution/nrcp')->with('nrcp-error', 'NRCP not found.');
         }
 
         // Update the person data
@@ -234,7 +234,7 @@ class NrcpController extends BaseController
         ];
         $db->table('nrcp_members')->where('id', $id)->update($nrcpData);
 
-        return redirect()->to('/institution/nrcp_members/index')->with('success', 'NRCP updated successfully.');
+        return redirect()->to('/institution/nrcp_members/index')->with('nrcp-success', 'NRCP updated successfully.');
     }
 
     // Search for NRCP members based on query

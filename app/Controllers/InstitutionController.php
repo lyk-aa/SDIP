@@ -139,9 +139,9 @@ class InstitutionController extends BaseController
                     ->where('stakeholder_id', $stakeholderId)
                     ->update($updateData);
 
-                return redirect()->to('/institution/home')->with('success', 'Institution reactivated successfully!');
+                return redirect()->to('/institution/home')->with('institution-success', 'Institution added successfully!');
             } else {
-                return redirect()->to('/institution/home')->with('error', 'Institution already exists!');
+                return redirect()->to('/institution/home')->with('institution-error', 'Institution already exists!');
             }
         }
 
@@ -167,7 +167,7 @@ class InstitutionController extends BaseController
         ];
         $db->table('institutions')->insert($institutionData);
 
-        return redirect()->to('/institution/home')->with('success', 'Institution added successfully!');
+        return redirect()->to('/institution/home')->with('institution-success', 'Institution added successfully!');
     }
 
     // Show form for editing an existing institution
@@ -186,7 +186,7 @@ class InstitutionController extends BaseController
 
         // If no institution found, redirect with an error message
         if (!$institution) {
-            return redirect()->to('/institution/home')->with('error', 'Institution not found.');
+            return redirect()->to('/institution/home')->with('institution-error', 'Institution not found.');
         }
 
         // Return the view with the institution's data
@@ -202,7 +202,7 @@ class InstitutionController extends BaseController
         // Fetch the institution's current details
         $institution = $db->table('institutions')->where('id', $id)->get()->getRowArray();
         if (!$institution) {
-            return redirect()->to('/institution/home')->with('error', 'Institution not found!');
+            return redirect()->to('/institution/home')->with('institution-error', 'Institution not found!');
         }
 
         // Handle image update if a new image is provided
@@ -230,7 +230,7 @@ class InstitutionController extends BaseController
             'updated_at' => $timestamp
         ]);
 
-        return redirect()->to('/institution/home')->with('success', 'Institution updated successfully!');
+        return redirect()->to('/institution/home')->with('institution-success', 'Institution updated successfully!');
     }
 
     // Mark an institution as inactive (soft delete)
@@ -240,7 +240,7 @@ class InstitutionController extends BaseController
 
         // Ensure the institution ID is numeric
         if (!is_numeric($id)) {
-            return redirect()->to('/institution/home')->with('error', 'Invalid Institution ID');
+            return redirect()->to('/institution/home')->with('institution-error', 'Invalid Institution ID');
         }
 
         // Fetch the institution to confirm its existence
@@ -248,13 +248,13 @@ class InstitutionController extends BaseController
 
         // If no institution found, return an error message
         if (!$institution) {
-            return redirect()->to('/institution/home')->with('error', 'Institution not found!');
+            return redirect()->to('/institution/home')->with('institution-error', 'Institution not found!');
         }
 
         // Mark the institution as inactive (soft delete)
         $db->table('institutions')->where('id', $id)->update(['status' => 'inactive']);
 
-        return redirect()->to('/institution/home')->with('success', 'Institution status set to inactive!');
+        return redirect()->to('/institution/home')->with('institution-success', 'Institution succesfully deleted!');
     }
 
     // View detailed information for a specific institution
@@ -316,7 +316,7 @@ class InstitutionController extends BaseController
 
         // If the institution does not exist, return an error
         if (!$institution) {
-            return redirect()->to('/institution/home')->with('error', 'Institution not found.');
+            return redirect()->to('/institution/home')->with('institution-error', 'Institution not found.');
         }
 
         // Return the view with all the institution's details

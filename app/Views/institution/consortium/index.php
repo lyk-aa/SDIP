@@ -139,6 +139,10 @@
             opacity: 1;
         }
     }
+    
+    .notification {
+        transition: opacity 0.5s ease-out;
+    }
 </style>
 
 <body>
@@ -148,6 +152,18 @@
             <div class="title has-text-centered">
                 <h1>Consortium Membership</h1>
             </div>
+
+            <?php if (session()->getFlashdata('cons-success')): ?>
+                <div class="notification is-success is-light auto-dismiss">
+                    <?= session()->getFlashdata('cons-success') ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (session()->getFlashdata('cons-error')): ?>
+                <div class="notification is-danger is-light auto-dismiss">
+                    <?= session()->getFlashdata('cons-error') ?>
+                </div>
+            <?php endif; ?>
 
             <div class="buttons-container" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="control has-icons-left">
@@ -233,6 +249,14 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            document.querySelectorAll('.notification.auto-dismiss').forEach(notification => {
+                notification.style.transition = 'opacity 0.5s ease-out';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            });
+        }, 5000);
+
         const searchInput = document.getElementById('search-input');
         const searchResultsContainer = document.getElementById('search-results');
         const tableBody = document.querySelector('.table tbody');

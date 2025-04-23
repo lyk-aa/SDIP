@@ -86,7 +86,7 @@ class ConsortiumController extends BaseController
         ]);
 
         // Redirect to the consortium list with a success message
-        return redirect()->to('/institution/consortium/index')->with('success', 'Consortium added successfully!');
+        return redirect()->to('/institution/consortium/index')->with('cons-success', 'Consortium added successfully!');
     }
 
     // Show the form to edit an existing consortium
@@ -104,7 +104,7 @@ class ConsortiumController extends BaseController
 
         // If consortium not found, redirect with an error message
         if (!$consortium) {
-            return redirect()->to('/institution/consortium/index')->with('error', 'Consortium not found!');
+            return redirect()->to('/institution/consortium/index')->with('cons-error', 'Consortium not found!');
         }
 
         // Fetch active institutions and their stakeholder names
@@ -146,7 +146,7 @@ class ConsortiumController extends BaseController
             ]);
 
         // Redirect to the consortium list with a success message
-        return redirect()->to('/institution/consortium/index')->with('success', 'Consortium updated successfully!');
+        return redirect()->to('/institution/consortium/index')->with('cons-success', 'Consortium updated successfully!');
     }
 
     // Delete a consortium and its members
@@ -161,7 +161,7 @@ class ConsortiumController extends BaseController
         $db->table('consortiums')->delete(['id' => $id]);
 
         // Redirect to the consortium list with a success message
-        return redirect()->to('/institution/consortium/index')->with('success', 'Consortium deleted successfully!');
+        return redirect()->to('/institution/consortium/index')->with('cons-success', 'Consortium deleted successfully!');
     }
 
     // Search for consortiums by name or institution name

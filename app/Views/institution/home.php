@@ -146,7 +146,7 @@
         justify-content: center;
         align-items: center;
         z-index: 1000;
-        
+
     }
 
     .modal-content {
@@ -157,7 +157,7 @@
         max-width: 400px;
         width: 90%;
         text-align: center;
-        font-weight: normal;       
+        font-weight: normal;
 
     }
 
@@ -167,7 +167,7 @@
         right: 15px;
         font-size: 1rem;
         color: white;
-        background-color:  #4a4a4a; 
+        background-color: #4a4a4a;
         border: none;
         cursor: pointer;
         z-index: 10;
@@ -190,8 +190,12 @@
     }
 
     .icon-circle i {
-        color:  #f14668;
+        color: #f14668;
         font-size: 28px;
+    }
+
+    .notification {
+        transition: opacity 0.5s ease-out;
     }
 </style>
 
@@ -202,6 +206,18 @@
             <div class="title has-text-centered">
                 <h1>Institutions</h1>
             </div>
+
+            <?php if (session()->getFlashdata('institution-success')): ?>
+                <div class="notification is-success is-light auto-dismiss">
+                    <?= session()->getFlashdata('institution-success') ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (session()->getFlashdata('institution-error')): ?>
+                <div class="notification is-danger is-light auto-dismiss">
+                    <?= session()->getFlashdata('institution-error') ?>
+                </div>
+            <?php endif; ?>
 
             <div class="buttons-container" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="control has-icons-left">
@@ -291,6 +307,14 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            document.querySelectorAll('.notification.auto-dismiss').forEach(notification => {
+                notification.style.transition = 'opacity 0.5s ease-out';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            });
+        }, 5000);
+
         document.querySelectorAll('.dropdown-trigger button').forEach(button => {
             button.addEventListener('click', function (e) {
                 e.stopPropagation();
@@ -386,7 +410,7 @@
                 });
         } else {
             searchResults.innerHTML = '';
-            cardContainer.style.display = 'flex'; 
+            cardContainer.style.display = 'flex';
         }
     });
 </script>

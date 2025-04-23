@@ -237,6 +237,10 @@
         color: #f14668;
         font-size: 28px;
     }
+
+    .notification {
+        transition: opacity 0.5s ease-out;
+    }
 </style>
 
 <body>
@@ -246,6 +250,18 @@
             <div class="title has-text-centered">
                 <h1>DOST VI Balik Scientist</h1>
             </div>
+
+            <?php if (session()->getFlashdata('bs-success')): ?>
+                <div class="notification is-success is-light auto-dismiss">
+                    <?= session()->getFlashdata('bs-success') ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (session()->getFlashdata('bs-error')): ?>
+                <div class="notification is-danger is-light auto-dismiss">
+                    <?= session()->getFlashdata('bs-error') ?>
+                </div>
+            <?php endif; ?>
 
             <div class="buttons-container">
                 <div class="control has-icons-left">
@@ -356,6 +372,14 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(() => {
+            document.querySelectorAll('.notification.auto-dismiss').forEach(notification => {
+                notification.style.transition = 'opacity 0.5s ease-out';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            });
+        }, 5000);
+
         const cancelBtn = document.getElementById('cancelDelete');
         const confirmBtn = document.getElementById('confirmDelete');
 

@@ -167,6 +167,10 @@
         color: #f14668;
         font-size: 28px;
     }
+
+    .notification {
+        transition: opacity 0.5s ease-out;
+    }
 </style>
 
 <body>
@@ -175,6 +179,18 @@
             <div class="title has-text-centered">
                 <h1>Research Projects</h1>
             </div>
+
+            <?php if (session()->getFlashdata('project-success')): ?>
+                <div class="notification is-success is-light auto-dismiss">
+                    <?= session()->getFlashdata('project-success') ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (session()->getFlashdata('project-error')): ?>
+                <div class="notification is-danger is-light auto-dismiss">
+                    <?= session()->getFlashdata('project-error') ?>
+                </div>
+            <?php endif; ?>
 
             <div class="buttons-container">
                 <div class="control has-icons-left">
@@ -231,10 +247,16 @@
 </body>
 
 <script>
-    let deleteProjectId = null;
-
     document.addEventListener("DOMContentLoaded", function () {
         fetchProjects();
+
+        setTimeout(() => {
+            document.querySelectorAll('.notification.auto-dismiss').forEach(notification => {
+                notification.style.transition = 'opacity 0.5s ease-out';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            });
+        }, 5000);
     });
 
     document.getElementById('search-input').addEventListener('input', function () {
@@ -324,29 +346,11 @@
 
     document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
     document.getElementById('confirmDelete').addEventListener('click', function () {
-        if (deleteProjectId) {
-            // Perform the delete action via GET request
-            fetch(`<?= base_url('institution/projects/delete/') ?>${deleteProjectId}`, {
-                method: 'GET',  // Use GET method for deleting if that's what you prefer
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        closeDeleteModal(); // Close the modal
-                        fetchProjects(); // Refresh the list of projects
-                    } else {
-                        alert('Error deleting the project: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while deleting the project.');
-                });
-        }
-    });
+    if (deleteProjectId) {
+        // Use full page redirect to match controller behavior
+        window.location.href = `<?= base_url('institution/projects/delete/') ?>${deleteProjectId}`;
+    }
+});
 </script>
 
 
