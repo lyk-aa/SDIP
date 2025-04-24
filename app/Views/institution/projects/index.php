@@ -205,7 +205,7 @@
                     <span>Create New</span>
                 </a>
 
-                <button class="button is-light">
+                <button class="button is-light" onclick="printProjects('<?= site_url('institution/projects/print') ?>')">
                     <span class="icon"><i class="fas fa-download"></i></span>
                 </button>
             </div>
@@ -351,6 +351,22 @@
         window.location.href = `<?= base_url('institution/projects/delete/') ?>${deleteProjectId}`;
     }
 });
+
+    function printProjects(url) {
+        const printWindow = window.open( url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
+
+        printWindow.addEventListener('load', () => {
+            if (Boolean(printWindow.chrome)) {
+                printWindow.print();
+                setTimeout(function(){
+                    printWindow.close();
+                }, 500);
+            } else {
+                printWindow.print();
+                printWindow.close();
+            }
+        }, true);
+    }
 </script>
 
 

@@ -39,13 +39,11 @@
         overflow: visible !important;
         position: relative;
         border-radius: 10px;
-
     }
 
     .modal-card {
         max-height: 90vh;
         overflow: visible;
-
     }
 
     .ts-dropdown {

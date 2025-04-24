@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
 use Config\Database;
 
 class ResearchCentersController extends BaseController
@@ -143,6 +142,5 @@ public function delete($id)
     // Redirect to the research centers list with a success message
     return redirect()->to('/institution/research_centers/index')->with('centers-success', 'Research Center deleted successfully!');
 }
-
 }
 

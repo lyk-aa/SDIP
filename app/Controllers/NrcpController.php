@@ -277,4 +277,10 @@ class NrcpController extends BaseController
 
         return view('institution/nrcp_members/index', $data);
     }
+
+    // Print NRCP
+    public function printNrcp()
+    {
+        return view('institution/nrcp_members/print_nrcp_members');
+    }
 }

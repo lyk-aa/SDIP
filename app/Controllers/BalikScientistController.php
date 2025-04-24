@@ -289,4 +289,10 @@ class BalikScientistController extends BaseController
 
         return view('institution/balik_scientist/index', $data);
     }
+
+    // Print Balik Scientist
+    public function printBalikScientist()
+    {
+        return view('institution/balik_scientist/print_balik_scientist');
+    }
 }

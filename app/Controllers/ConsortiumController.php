@@ -62,32 +62,25 @@ class ConsortiumController extends BaseController
 
     // Store a newly created consortium
     public function store()
-    {
-        $db = \Config\Database::connect();
-        $timestamp = date('Y-m-d H:i:s');
+{
+    $db = \Config\Database::connect();
+    $timestamp = date('Y-m-d H:i:s');
 
-        // Prepare the data to insert into the consortiums table
-        $data = [
-            'name' => $this->request->getPost('name'),
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp
-        ];
+    // Prepare data with only the fields present in rd_innovation_centers
+    $data = [
+        'name'       => $this->request->getPost('name'),
+        'created_at' => $timestamp,
+        'updated_at' => $timestamp
+    ];
 
-        // Insert consortium data and retrieve the last inserted ID
-        $db->table('consortiums')->insert($data);
-        $consortium_id = $db->insertID();
+    // Insert the new research center record
+    $db->table('rd_innovation_centers')->insert($data);
 
-        // Insert a new member into the consortium_members table
-        $db->table('consortium_members')->insert([
-            'institution_id' => $this->request->getPost('institution'),
-            'consortium_id' => $consortium_id,
-            'created_at' => $timestamp,
-            'updated_at' => $timestamp
-        ]);
+    // Redirect with success message
+    return redirect()->to('/institution/research_centers/index')
+                     ->with('research-center-success', 'Research Center added successfully!');
+}
 
-        // Redirect to the consortium list with a success message
-        return redirect()->to('/institution/consortium/index')->with('cons-success', 'Consortium added successfully!');
-    }
 
     // Show the form to edit an existing consortium
     public function edit($id)
@@ -195,5 +188,11 @@ class ConsortiumController extends BaseController
 
         // Return the search results as JSON
         return $this->response->setJSON($consortiums);
+    }
+
+    // Print Consortium
+    public function printConsortium()
+    {
+        return view('institution/consortium/print_consortium');
     }
 }

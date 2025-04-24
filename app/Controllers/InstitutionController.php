@@ -321,6 +321,7 @@ class InstitutionController extends BaseController
 
         // Return the view with all the institution's details
         return view('institution/details', [
+            'details_id' => $id,
             'institution' => $institution,
             'nrcp_members' => $nrcp_members,
             'balik_scientists' => $balik_scientists,
@@ -358,5 +359,122 @@ class InstitutionController extends BaseController
 
         // Execute the query and return results
         return $this->response->setJSON($builder->get()->getResultArray());
+    }
+
+    // Print All Institutions
+    public function printAllInstitutions() 
+    {    
+        $db = \Config\Database::connect();
+        $builder = $db->table('institutions');
+
+        // Select required columns from institutions and stakeholders tables
+        $builder->select('
+        institutions.id, institutions.image, institutions.type, 
+        stakeholders.name, stakeholders.abbreviation, 
+        stakeholders.street, stakeholders.barangay, 
+        stakeholders.municipality, stakeholders.province
+        ');
+
+        // Join the stakeholders table to get related information
+        $builder->join('stakeholders', 'stakeholders.id = institutions.stakeholder_id');
+
+        // Filter only active institutions
+        $builder->where('institutions.status', 'active');
+
+        // Sort institutions alphabetically by stakeholder (institution) name
+        $builder->orderBy('stakeholders.name', 'ASC');
+
+        // Execute the query and pass the result to the view
+        $data['institutions'] = $builder->get()->getResultArray();
+
+        $allInstitutionDetails = [];
+
+        foreach ($data['institutions'] as $all_institutions) {
+            $id = $all_institutions['id']; // Get the current institution ID
+        
+            // Fetch detailed information for the institution
+            $institution = $db->table('institutions as i')
+                ->select('i.id as institution_id, i.type, i.image, 
+                    s.id as stakeholder_id, s.name, s.abbreviation, 
+                    s.street, s.barangay, s.municipality, s.province, s.country,
+                    p.id as person_id, CONCAT(p.honorifics, " ", p.first_name, " ", p.middle_name, " ", p.last_name) as person_name, p.designation,
+                    c.id as contact_id, c.telephone_num, c.email_address')
+                ->join('stakeholders as s', 's.id = i.stakeholder_id', 'left')
+                ->join('stakeholder_members as sm', 'sm.stakeholder_id = s.id', 'left')
+                ->join('persons as p', 'p.id = sm.person_id', 'left')
+                ->join('contact_details as c', 'c.person_id = p.id', 'left')
+                ->where('i.id', $id)
+                ->get()
+                ->getRowArray();
+        
+            // Fetch completed research projects
+            $completed_research_projects = $db->table('research_projects as rp')
+                ->select('rp.name as research_project_name, rp.description, rp.status, rp.sector, rp.project_objectives, rp.duration, rp.project_leader, rp.approved_amount')
+                ->where('rp.institution_id', $id)
+                ->where('rp.status', 'Completed')
+                ->get()
+                ->getResultArray();
+        
+            // Fetch ongoing research projects
+            $ongoing_research_projects = $db->table('research_projects as rp')
+                ->select('rp.name as research_project_name, rp.description, rp.status, rp.sector, rp.project_objectives, rp.duration, rp.project_leader, rp.approved_amount')
+                ->where('rp.institution_id', $id)
+                ->where('rp.status', 'Ongoing')
+                ->get()
+                ->getResultArray();
+
+            // Store the details in the array
+            $allInstitutionDetails[] = [
+                'institution' => $institution,
+                'completed_research_projects' => $completed_research_projects,
+                'ongoing_research_projects' => $ongoing_research_projects
+            ];
+        }
+
+        return view('institution/print_all_institutions', [
+            'allInstitutionDetails' => $allInstitutionDetails
+        ]);
+    }
+
+    // Print Details
+    public function printDetails($id) 
+    {   
+        $db = \Config\Database::connect();
+
+        // Fetch detailed information for the institution
+        $institution = $db->table('institutions as i')
+            ->select('i.id as institution_id, i.type, i.image, 
+                s.id as stakeholder_id, s.name, s.abbreviation, 
+                s.street, s.barangay, s.municipality, s.province, s.country,
+                p.id as person_id, CONCAT(p.honorifics, " ", p.first_name, " ", p.middle_name, " ", p.last_name) as person_name, p.designation,
+                c.id as contact_id, c.telephone_num, c.email_address')
+            ->join('stakeholders as s', 's.id = i.stakeholder_id', 'left')
+            ->join('stakeholder_members as sm', 'sm.stakeholder_id = s.id', 'left')
+            ->join('persons as p', 'p.id = sm.person_id', 'left')
+            ->join('contact_details as c', 'c.person_id = p.id', 'left')
+            ->where('i.id', $id)
+            ->get()
+            ->getRowArray();
+
+        // Fetch completed and ongoing research projects
+        $completed_research_projects = $db->table('research_projects as rp')
+            ->select('rp.name as research_project_name, rp.description, rp.status, rp.sector, rp.project_objectives, rp.duration, rp.project_leader, rp.approved_amount')
+            ->where('rp.institution_id', $id)
+            ->where('rp.status', 'Completed')
+            ->get()
+            ->getResultArray();
+    
+        $ongoing_research_projects = $db->table('research_projects as rp')
+            ->select('rp.name as research_project_name, rp.description, rp.status, rp.sector, rp.project_objectives, rp.duration, rp.project_leader, rp.approved_amount')
+            ->where('rp.institution_id', $id)
+            ->where('rp.status', 'Ongoing')
+            ->get()
+            ->getResultArray();
+
+        return view('institution/print_details', [
+            'institution' => $institution,
+            'completed_research_projects' => $completed_research_projects,
+            'ongoing_research_projects' => $ongoing_research_projects
+        ]);
     }
 }
