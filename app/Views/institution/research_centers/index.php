@@ -50,6 +50,7 @@
         text-align: center;
     }
 
+    /* Modal Styling */
     .modal {
         display: none;
         position: fixed;
@@ -67,6 +68,20 @@
         display: flex;
     }
 
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+
+    }
+
     .modal-content {
         position: relative;
         background: white;
@@ -76,6 +91,8 @@
         width: 90%;
         text-align: center;
         font-weight: normal;
+        /* No bold text */
+
     }
 
     .modal-close {
@@ -135,19 +152,19 @@
                 <h1>Research Centers</h1>
             </div>
 
-            <?php if (session()->getFlashdata('center-success')): ?>
+            <?php if (session()->getFlashdata('centers-success')): ?>
                 <div class="notification is-success is-light auto-dismiss">
-                    <?= session()->getFlashdata('center-success') ?>
+                    <?= session()->getFlashdata('centers-success') ?>
                 </div>
             <?php endif; ?>
 
-            <?php if (session()->getFlashdata('center-error')): ?>
+            <?php if (session()->getFlashdata('research-error')): ?>
                 <div class="notification is-danger is-light auto-dismiss">
-                    <?= session()->getFlashdata('center-error') ?>
+                    <?= session()->getFlashdata('centers-error') ?>
                 </div>
             <?php endif; ?>
 
-            <div class="buttons-container">
+            <div class="buttons-container" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="control has-icons-left">
                     <input id="search-input" class="input" type="text" placeholder="Search..." />
                     <span class="icon is-left">
@@ -155,17 +172,17 @@
                     </span>
                 </div>
 
-                <a href="<?= base_url('institution/research-centers/create') ?>" class="button is-primary">
+                <a href="<?= base_url('institution/research_centers/create') ?>" class="button is-primary">
                     <span class="icon"><i class="fas fa-plus"></i></span>
                     <span>Create New</span>
                 </a>
 
-                <button class="button is-light" onclick="printCenters('<?= site_url('institution/research-centers/print') ?>')">
+                <button class="button is-light">
                     <span class="icon"><i class="fas fa-download"></i></span>
                 </button>
             </div>
 
-            <div class="table-container">
+            <div class="table-container mt-4">
                 <table class="table is-striped is-hoverable is-fullwidth">
                     <thead>
                         <tr>
@@ -174,19 +191,23 @@
                             <th class="has-text-centered">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <?php if (!empty($centers)): ?>
-                            <?php foreach ($centers as $center): ?>
+                    <tbody id="table-body">
+                        <?php if (!empty($research_centers)): ?>
+                            <?php foreach ($research_centers as $center): ?>
                                 <tr>
-                                    <td><?= esc($center->research_center_name ?? 'N/A') ?></td>
-                                    <td><?= esc($center->institution_name ?? '') ?></td>
+                                    <td><?= esc($center->research_center_name) ?></td>
+                                    <td><?= esc($center->institution_name) ?></td>
                                     <td class="has-text-centered">
-                                        <div class="buttons is-flex is-justify-content-center is-align-items-center" style="gap: 10px;">
-                                            <a href="<?= site_url('/institution/research-centers/edit/' . $center->research_center_id) ?>" class="button is-info is-small actions-btn">
+                                        <div class="buttons is-flex is-justify-content-center is-align-items-center"
+                                            style="gap: 10px;">
+                                            <a href="<?= site_url('institution/research_centers/edit/' . $center->id) ?>"
+                                                class="button is-info is-small">
                                                 <span class="icon"><i class="fas fa-edit"></i></span>
                                                 <span>Edit</span>
                                             </a>
-                                            <a href="javascript:void(0);" class="button is-danger is-small actions-btn delete-btn" data-id="<?= $center->research_center_id ?>">
+                                            <a href="javascript:void(0);"
+                                                class="button is-danger is-small actions-btn delete-btn"
+                                                data-id="<?= $center->id ?>">
                                                 <span class="icon"><i class="fas fa-trash"></i></span>
                                                 <span>Delete</span>
                                             </a>
@@ -196,10 +217,12 @@
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="3" class="has-text-centered has-text-grey-light">No research centers found.</td>
+                                <td colspan="3" class="has-text-centered has-text-grey-light">No research centers found.
+                                </td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -213,125 +236,67 @@
                     <i class="fas fa-trash-alt"></i>
                 </div>
             </div>
-            <h1 class="title is-5 has-text-centered mt-5 mb-4">Are you sure you want to delete this Research Center?</h1>
+            <h1 class="title is-5 has-text-centered mt-5 mb-4">Are you sure you want to delete this Research Center?
+            </h1>
             <div class="buttons is-centered mt-4">
                 <button id="cancelDelete" class="button is-light">Cancel</button>
                 <button id="confirmDelete" class="button is-danger">Delete</button>
             </div>
         </div>
     </div>
-</body>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(() => {
-            document.querySelectorAll('.notification.auto-dismiss').forEach(notification => {
-                notification.style.opacity = '0';
-                setTimeout(() => notification.remove(), 500);
-            });
-        }, 5000);
-
-        const searchInput = document.getElementById('search-input');
-        const tableBody = document.querySelector('.table tbody');
-        const originalCenters = <?= json_encode($research_centers) ?>;
-
-        function renderOriginalTable() {
-            tableBody.innerHTML = '';
-            if (originalCenters.length > 0) {
-                originalCenters.forEach(center => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${center.research_center_name}</td>
-                        <td>${center.institution_name}</td>
-                        <td class="has-text-centered">
-                            <div class="buttons is-flex is-justify-content-center is-align-items-center" style="gap: 10px;">
-                                <a href="/institution/research-centers/edit/${center.research_center_id}" class="button is-info is-small actions-btn">
-                                    <span class="icon"><i class="fas fa-edit"></i></span>
-                                    <span>Edit</span>
-                                </a>
-                                <a href="javascript:void(0);" class="button is-danger is-small actions-btn delete-btn" data-id="${center.research_center_id}">
-                                    <span class="icon"><i class="fas fa-trash"></i></span>
-                                    <span>Delete</span>
-                                </a>
-                            </div>
-                        </td>`;
-                    tableBody.appendChild(row);
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                document.querySelectorAll('.notification.auto-dismiss').forEach(notification => {
+                    notification.style.transition = 'opacity 0.5s ease-out';
+                    notification.style.opacity = '0';
+                    setTimeout(() => notification.remove(), 500);
                 });
-            } else {
-                tableBody.innerHTML = '<tr><td colspan="3" class="has-text-centered">No research centers found.</td></tr>';
-            }
-        }
+            }, 5000);
 
-        searchInput.addEventListener('input', function () {
-            const query = searchInput.value.trim().toLowerCase();
-            if (query.length > 0) {
-                fetch("<?= base_url('institution/research-centers/search') ?>?query=" + query)
-                    .then(response => response.json())
-                    .then(data => {
-                        tableBody.innerHTML = '';
-                        if (data.length > 0) {
-                            data.forEach(center => {
-                                const row = document.createElement('tr');
-                                row.innerHTML = `
-                                    <td>${center.research_center_name}</td>
-                                    <td>${center.institution_name}</td>
-                                    <td class="has-text-centered">
-                                        <div class="buttons is-flex is-justify-content-center is-align-items-center" style="gap: 10px;">
-                                            <a href="/institution/research-centers/edit/${center.research_center_id}" class="button is-info is-small actions-btn">
-                                                <span class="icon"><i class="fas fa-edit"></i></span>
-                                                <span>Edit</span>
-                                            </a>
-                                            <a href="javascript:void(0);" class="button is-danger is-small actions-btn delete-btn" data-id="${center.research_center_id}">
-                                                <span class="icon"><i class="fas fa-trash"></i></span>
-                                                <span>Delete</span>
-                                            </a>
-                                        </div>
-                                    </td>`;
-                                tableBody.appendChild(row);
-                            });
-                        } else {
-                            tableBody.innerHTML = '<tr><td colspan="3" class="has-text-centered">No results found.</td></tr>';
-                        }
-                    });
-            } else {
-                renderOriginalTable();
-            }
+            const searchInput = document.getElementById('search-input');
+            const tableBody = document.getElementById('table-body');
+
+            searchInput.addEventListener('input', function () {
+                const query = searchInput.value.trim().toLowerCase();
+                if (query.length > 0) {
+                    fetch("<?= base_url('institution/research_centers/search') ?>?query=" + query)
+                        .then(response => response.json())
+                        .then(data => renderTable(data))
+                        .catch(error => console.error('Search error:', error));
+                } else {
+                    renderTable(<?= json_encode($research_centers ?? []) ?>);
+                }
+            });
+
+            // Delete modal
+            const deleteModal = document.getElementById('deleteModal');
+            const cancelDelete = document.getElementById('cancelDelete');
+            const confirmDelete = document.getElementById('confirmDelete');
+            let selectedDeleteId = null;
+
+            document.body.addEventListener('click', function (event) {
+                const deleteBtn = event.target.closest('.delete-btn');
+                if (deleteBtn) {
+                    selectedDeleteId = deleteBtn.getAttribute('data-id');
+                    deleteModal.classList.add('is-active');
+                }
+            });
+
+            cancelDelete.addEventListener('click', () => {
+                deleteModal.classList.remove('is-active');
+                selectedDeleteId = null;
+            });
+
+            confirmDelete.addEventListener('click', () => {
+                if (selectedDeleteId) {
+                    window.location.href = "<?= base_url('institution/research_centers/delete/') ?>" + selectedDeleteId;
+                }
+            });
         });
+    </script>
 
-        renderOriginalTable();
-
-        const deleteModal = document.getElementById('deleteModal');
-        const cancelDelete = document.getElementById('cancelDelete');
-        const confirmDelete = document.getElementById('confirmDelete');
-        let selectedDeleteId = null;
-
-        document.body.addEventListener('click', function (event) {
-            const deleteBtn = event.target.closest('.delete-btn');
-            if (deleteBtn) {
-                selectedDeleteId = deleteBtn.getAttribute('data-id');
-                deleteModal.classList.add('is-active');
-            }
-        });
-
-        cancelDelete.addEventListener('click', () => {
-            deleteModal.classList.remove('is-active');
-            selectedDeleteId = null;
-        });
-
-        confirmDelete.addEventListener('click', () => {
-            if (selectedDeleteId) {
-                window.location.href = "<?= base_url('institution/research-centers/delete/') ?>" + selectedDeleteId;
-            }
-        });
-    });
-
-    function printCenters(url) {
-        const printWindow = window.open(url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
-        printWindow.addEventListener('load', () => {
-            printWindow.print();
-            setTimeout(() => printWindow.close(), 500);
-        }, true);
-    }
-</script>
+</body>
 
 <?= $this->endSection() ?>

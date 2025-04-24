@@ -38,6 +38,7 @@
         background-color: #fff;
         overflow: visible !important;
         position: relative;
+        border-radius: 10px;
     }
 
     .modal-card {
@@ -50,11 +51,92 @@
         position: absolute !important;
     }
 
+    .image-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #ddd;
+        margin-bottom: 1rem;
+        position: relative;
+        background-color: #f0f0f0;
+    }
+
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .edit-button {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border-radius: 50%;
+        padding: 8px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .edit-button:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    .hidden-input {
+        display: none;
+    }
+
+    .profile-text {
+        position: absolute;
+        color: rgba(54, 54, 54, 0.6);
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    #profile-preview.hidden {
+        display: none;
+    }
+
     .title {
         color: #363636;
         margin-bottom: 0.75rem;
         font-weight: 500;
         font-size: 1.1rem;
+    }
+
+    .title.is-5 {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #363636;
+        margin-bottom: 0.5rem;
+
+
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #363636;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.3rem;
     }
 
     .label {
@@ -79,6 +161,13 @@
         box-shadow: 0 0 0 2px rgba(50, 115, 220, 0.2);
     }
 
+    .button {
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        transition: background-color 0.2s, box-shadow 0.2s;
+    }
+
     .button.is-success {
         background-color: #48c774;
         color: #fff;
@@ -86,6 +175,20 @@
 
     .button.is-success:hover {
         background-color: #3dbb63;
+    }
+
+    .button.is-primary {
+        background-color: #3273dc;
+        color: #fff;
+    }
+
+    .button.is-primary:hover {
+        background-color: #2759bd;
+    }
+
+    .button.is-success,
+    .button.is-primary {
+        box-shadow: none;
     }
 
     .field.has-addons .control .button {
@@ -121,86 +224,138 @@
     .mt-4 {
         margin-top: 1.5rem;
     }
+
+    #contact-info .field {
+        margin-bottom: 1rem;
+    }
+
+    .select-input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .select-input-container input {
+        flex: 1;
+        padding-right: 2rem;
+    }
+
+    .select-overlay {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        width: 2rem;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ts-control {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+
+    .ts-control .item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        margin-right: 5px;
+    }
+
+    .ts-control input {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
 </style>
 
+
 <body>
-    <!-- Main Modal for Add Research Center -->
-    <div class="modal is-active" id="main-modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <section class="modal-card-body">
-                <p class="modal-card-title">Add Research Centers</p>
+  <!-- Main Modal for First Transaction --> 
+<div class="modal is-active" id="main-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <section class="modal-card-body">
+            <p class="modal-card-title">Add Research Center</p>
 
-                <button class="modal-close-btn" id="close-modal" aria-label="close">
-                    <i class="fas fa-times"></i>
-                </button>
+            <button class="modal-close-btn" id="close-modal" aria-label="close">
+                <i class="fas fa-times"></i>
+            </button>
 
-                <form id="projects-form" action="<?= site_url('institution/research_centers/store') ?>" method="post"
-                    enctype="multipart/form-data">
-                    <?= csrf_field() ?>
+            <form id="research-center-form" action="<?= site_url('/institution/research_centers/store') ?>" method="post" enctype="multipart/form-data">
+            <?= csrf_field() ?>
 
-                    <div class="columns">
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Institution</label>
-                                <div class="control">
-                                    <!-- Tom Select on the Institution Dropdown -->
-                                    <div class="select is-fullwidth">
-                                        <select id="institution-select" name="institution" required>
-                                            <option value="">Select Institution</option>
-                                            <?php if (!empty($institutions)): ?>
-                                                <?php foreach ($institutions as $institution): ?>
-                                                    <?php if (isset($institution->name)): ?>
-                                                        <option value="<?= $institution->id ?>"><?= htmlspecialchars($institution->name) ?></option>
-                                                    <?php else: ?>
-                                                        <option value="">No Name Available</option>
-                                                    <?php endif; ?>
-                                                <?php endforeach; ?>
-                                            <?php else: ?>
-                                                <option value="">No Institutions Found</option>
-                                            <?php endif; ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Consortium Name</label>
-                                <div class="control">
-                                    <input type="text" name="name" class="input" required>
+                <div class="columns">
+                    <div class="column is-half">
+                        <div class="field">
+                            <label class="label">Institution</label>
+                            <div class="control">
+                                <!-- Tom Select on the Institution Dropdown -->
+                                <div class="select is-fullwidth">
+                                    <select id="institution-select" name="institution" required>
+                                        <option value="">Select Institution</option>
+                                        <?php foreach ($institutions as $institution): ?>
+                                            <option value="<?= $institution->id ?>"><?= $institution->name ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <section class="has-text-right">
-                        <button type="submit" class="button is-success" id="submit-button">Save</button>
-                    </section>
-                </form>
-            </section>
-        </div>
+                    <div class="column is-half">
+                        <div class="field">
+                            <label class="label">Research Center Name</label>
+                            <div class="control">
+                                <input type="text" name="name" class="input" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="has-text-right">
+                    <button type="submit" class="button is-success" id="submit-button">Save</button>
+                </section>
+            </form>
+        </section>
     </div>
+</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            new TomSelect("#institution-select", {
-                create: false, // No "Add ..." option
-                maxItems: 1,   // Single selection only
-                selectOnTab: true,
-                placeholder: "Select Institution",
-                onType: function (str) {
-                    // Optional: remove selection when typing starts
-                    this.clear(true);
-                }
-            });
-
-            document.getElementById("close-modal").addEventListener("click", function () {
-                window.location.href = "<?= base_url('institution/research_centers/index') ?>";
-            });
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#institution-select", {
+            create: false, // No "Add ..." option
+            maxItems: 1,   // Single selection only
+            selectOnTab: true,
+            placeholder: "Select Institution",
+            onType: function (str) {
+                // Optional: remove selection when typing starts
+                this.clear(true);
+            }
         });
-    </script>
+
+        document.getElementById("close-modal").addEventListener("click", function () {
+            window.location.href = "<?= base_url('institution/research_centers/index') ?>";
+
+        });
+    });
+</script>
+
 </body>
 
 <?= $this->endSection() ?>

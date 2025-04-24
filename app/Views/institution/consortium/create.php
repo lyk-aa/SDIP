@@ -38,6 +38,8 @@
         background-color: #fff;
         overflow: visible !important;
         position: relative;
+        border-radius: 10px;
+
     }
 
     .modal-card {

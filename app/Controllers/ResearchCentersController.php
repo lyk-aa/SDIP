@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
@@ -5,81 +7,35 @@ use Config\Database;
 
 class ResearchCentersController extends BaseController
 {
-    // Display list of research centers
     public function index()
     {
         $db = Database::connect();
-        $data['research_centers'] = $db->table('rd_innovation_centers')
-            ->select('rd_innovation_centers.*, s.name as stakeholder_name')
-            ->join('institutions i', 'i.id = rd_innovation_centers.institution_id', 'left')
-            ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
-            ->get()
-            ->getResult();
-
+        $builder = $db->table('rd_innovation_centers rd');
+        
+        $builder->select('
+            rd.id,
+            rd.name as research_center_name,
+            i.id as institution_id,
+            s.name as institution_name
+        ');
+        
+        $builder->join('institutions i', 'i.id = rd.institution_id', 'left');
+        $builder->join('stakeholders s', 's.id = i.stakeholder_id', 'left');
+        $builder->where('i.status', 'active');
+        $builder->orderBy('s.name', 'ASC');
+        
+        $data['research_centers'] = $builder->get()->getResult();
+        
         return view('institution/research_centers/index', $data);
     }
+    
 
-    // Show the form for creating a new research center
+
     public function create()
     {
-        $db = Database::connect();
-        $data['institutions'] = $db->table('institutions i')
-            ->select('i.id, s.name')
-            ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
-            ->where('i.status', 'active')
-            ->get()
-            ->getResult();
+        $db = \Config\Database::connect();
 
-        return view('institution/research_centers/create', $data);
-    }
-
-    // Store the newly created research center
-    public function store()
-    {
-        helper(['form']);
-
-        $validationRules = [
-            'institution' => 'required|integer',
-            'name'        => 'required|string|max_length[255]',
-            'description' => 'required|string',
-            'longitude'   => 'permit_empty|decimal',
-            'latitude'    => 'permit_empty|decimal',
-        ];
-
-        if (!$this->validate($validationRules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        }
-
-        $db = Database::connect();
-        $timestamp = date('Y-m-d H:i:s');
-
-        $data = [
-            'institution_id' => $this->request->getPost('institution'),
-            'name'           => $this->request->getPost('name'),
-            'description'    => $this->request->getPost('description'),
-            'longitude'      => $this->request->getPost('longitude'),
-            'latitude'       => $this->request->getPost('latitude'),
-            'created_at'     => $timestamp,
-            'updated_at'     => $timestamp
-        ];
-
-        $db->table('rd_innovation_centers')->insert($data);
-
-        return redirect()->to('/institution/research_centers/index')
-            ->with('success', 'Research Center added successfully!');
-    }
-
-    // Show the form for editing a research center
-    public function edit($id)
-    {
-        $db = Database::connect();
-
-        $research_center = $db->table('rd_innovation_centers')->where('id', $id)->get()->getRow();
-
-        if (!$research_center) {
-            return redirect()->to('/institution/research_centers/index')->with('error', 'Research Center not found!');
-        }
-
+        // Fetch active institutions and their stakeholder names
         $institutions = $db->table('institutions i')
             ->select('i.id, s.name')
             ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
@@ -87,74 +43,103 @@ class ResearchCentersController extends BaseController
             ->get()
             ->getResult();
 
-        return view('institution/research_centers/edit', [
-            'research_center' => $research_center,
+        // Pass institutions data to the create view
+        return view('institution/research_centers/create', [
             'institutions' => $institutions
         ]);
     }
 
-    // Update the research center
-    public function update($id)
+    // Store a newly created research center
+    public function store()
     {
-        helper(['form']);
-
-        $validationRules = [
-            'institution' => 'required|integer',
-            'name'        => 'required|string|max_length[255]',
-            'description' => 'required|string',
-            'longitude'   => 'permit_empty|decimal',
-            'latitude'    => 'permit_empty|decimal',
-        ];
-
-        if (!$this->validate($validationRules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        }
-
-        $db = Database::connect();
+        $db = \Config\Database::connect();
         $timestamp = date('Y-m-d H:i:s');
 
+        // Prepare the data to insert into the rd_innovation_centers table
         $data = [
+            'name' => $this->request->getPost('name'),
             'institution_id' => $this->request->getPost('institution'),
-            'name'           => $this->request->getPost('name'),
-            'description'    => $this->request->getPost('description'),
-            'longitude'      => $this->request->getPost('longitude'),
-            'latitude'       => $this->request->getPost('latitude'),
-            'updated_at'     => $timestamp
+            'created_at' => $timestamp,
+            'updated_at' => $timestamp
         ];
 
-        $db->table('rd_innovation_centers')->where('id', $id)->update($data);
+        // Insert research center data
+        $db->table('rd_innovation_centers')->insert($data);
 
-        return redirect()->to('/institution/research_centers/index')
-            ->with('success', 'Research Center updated successfully!');
+        // Redirect to the research centers list with a success message
+        return redirect()->to('/institution/research_centers/index')->with('centers-success', 'Research Center added successfully!');
+    }
+// Edit an existing research center
+public function edit($id)
+{
+    $db = \Config\Database::connect();
+
+    // Fetch the research center data
+    $research_center = $db->table('rd_innovation_centers')
+        ->select('id, name, institution_id')
+        ->where('id', $id)
+        ->get()
+        ->getRow();
+
+    // Fetch active institutions and their stakeholder names
+    $institutions = $db->table('institutions i')
+        ->select('i.id, s.name')
+        ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
+        ->where('i.status', 'active')
+        ->get()
+        ->getResult();
+
+    // Pass research center data and institutions data to the edit view
+    return view('institution/research_centers/edit', [
+        'research_center' => $research_center,
+        'institutions' => $institutions
+    ]);
+}
+
+// Update an existing research center
+public function update($id)
+{
+    $db = \Config\Database::connect();
+    $timestamp = date('Y-m-d H:i:s');
+
+    // Get the institution_id from the form input
+    $institution_id = $this->request->getPost('institution');
+
+    // Check if the institution exists and is active
+    $institution = $db->table('institutions')
+                      ->where('id', $institution_id)
+                      ->where('status', 'active')
+                      ->get()
+                      ->getRow();
+
+    if (!$institution) {
+        // Redirect with error message if institution is invalid
+        return redirect()->back()->with('error', 'Invalid or inactive institution selected.');
     }
 
-    // Delete a research center
-    public function delete($id)
-    {
-        $db = Database::connect();
-        $db->table('rd_innovation_centers')->where('id', $id)->delete();
+    // Prepare the data to update the rd_innovation_centers table
+    $data = [
+        'name' => $this->request->getPost('name'),
+        'institution_id' => $institution_id,
+        'updated_at' => $timestamp
+    ];
 
-        return redirect()->to('/institution/research_centers/index')
-            ->with('success', 'Research Center deleted successfully!');
-    }
+    // Update the research center record
+    $db->table('rd_innovation_centers')->update($data, ['id' => $id]);
 
-    // Search for research centers
-    public function search()
-    {
-        $searchTerm = $this->request->getVar('query');
-        $db = Database::connect();
+    // Redirect to the research centers list with a success message
+    return redirect()->to('/institution/research_centers/index')->with('centers-success', 'Research Center updated successfully!');
+}
 
-        $results = $db->table('rd_innovation_centers rc')
-            ->select('rc.*, s.name as institution_name')
-            ->join('institutions i', 'i.id = rc.institution_id', 'left')
-            ->join('stakeholders s', 's.id = i.stakeholder_id', 'left')
-            ->groupStart()
-                ->like('rc.name', $searchTerm)
-                ->orLike('s.name', $searchTerm)
-            ->groupEnd()
-            ->get()
-            ->getResult();
+// Delete an existing research center
+public function delete($id)
+{
+    $db = \Config\Database::connect();
 
-        return $this->response->setJSON($results);
-    }
+    // Delete the research center data
+    $db->table('rd_innovation_centers')->delete(['id' => $id]);
+
+    // Redirect to the research centers list with a success message
+    return redirect()->to('/institution/research_centers/index')->with('centers-success', 'Research Center deleted successfully!');
+}
 }

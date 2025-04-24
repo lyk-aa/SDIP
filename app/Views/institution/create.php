@@ -42,6 +42,8 @@
     .modal-card-body {
         padding: 1.5rem;
         background-color: #fff;
+        border-radius: 10px;
+
     }
 
     .image-placeholder {
