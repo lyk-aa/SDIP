@@ -45,6 +45,7 @@
     .modal-card {
         max-height: 90vh;
         overflow: visible;
+
     }
 
     .ts-dropdown {
@@ -287,75 +288,76 @@
 
 
 <body>
-    <!-- Main Modal for First Transaction -->
-    <div class="modal is-active" id="main-modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <section class="modal-card-body">
-                <p class="modal-card-title">Add Consortium</p>
+  <!-- Main Modal for First Transaction --> 
+<div class="modal is-active" id="main-modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <section class="modal-card-body">
+            <p class="modal-card-title">Add Research Center</p>
 
-                <button class="modal-close-btn" id="close-modal" aria-label="close">
-                    <i class="fas fa-times"></i>
-                </button>
+            <button class="modal-close-btn" id="close-modal" aria-label="close">
+                <i class="fas fa-times"></i>
+            </button>
 
-                <form id="projects-form" action="<?= site_url('institution/consortium/store') ?>" method="post"
-                    enctype="multipart/form-data">
-                    <?= csrf_field() ?>
+            <form id="research-center-form" action="<?= site_url('/institution/research_centers/store') ?>" method="post" enctype="multipart/form-data">
+            <?= csrf_field() ?>
 
-                    <div class="columns">
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Institution</label>
-                                <div class="control">
-                                    <!-- Tom Select on the Institution Dropdown -->
-                                    <div class="select is-fullwidth">
-                                        <select id="institution-select" name="institution" required>
-                                            <option value="">Select Institution</option>
-                                            <?php foreach ($institutions as $institution): ?>
-                                                <option value="<?= $institution->id ?>"><?= $institution->name ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="column is-half">
-                            <div class="field">
-                                <label class="label">Consortium Name</label>
-                                <div class="control">
-                                    <input type="text" name="name" class="input" required>
+                <div class="columns">
+                    <div class="column is-half">
+                        <div class="field">
+                            <label class="label">Institution</label>
+                            <div class="control">
+                                <!-- Tom Select on the Institution Dropdown -->
+                                <div class="select is-fullwidth">
+                                    <select id="institution-select" name="institution" required>
+                                        <option value="">Select Institution</option>
+                                        <?php foreach ($institutions as $institution): ?>
+                                            <option value="<?= $institution->id ?>"><?= $institution->name ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <section class="has-text-right">
-                        <button type="submit" class="button is-success" id="submit-button">Save</button>
-                    </section>
-                </form>
-            </section>
-        </div>
+                    <div class="column is-half">
+                        <div class="field">
+                            <label class="label">Research Center Name</label>
+                            <div class="control">
+                                <input type="text" name="name" class="input" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="has-text-right">
+                    <button type="submit" class="button is-success" id="submit-button">Save</button>
+                </section>
+            </form>
+        </section>
     </div>
+</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            new TomSelect("#institution-select", {
-                create: false, // No "Add ..." option
-                maxItems: 1,   // Single selection only
-                selectOnTab: true,
-                placeholder: "Select Institution",
-                onType: function (str) {
-                    // Optional: remove selection when typing starts
-                    this.clear(true);
-                }
-            });
-
-            document.getElementById("close-modal").addEventListener("click", function () {
-                window.location.href = "<?= base_url('institution/consortium/index') ?>";
-            });
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#institution-select", {
+            create: false, // No "Add ..." option
+            maxItems: 1,   // Single selection only
+            selectOnTab: true,
+            placeholder: "Select Institution",
+            onType: function (str) {
+                // Optional: remove selection when typing starts
+                this.clear(true);
+            }
         });
-    </script>
+
+        document.getElementById("close-modal").addEventListener("click", function () {
+            window.location.href = "<?= base_url('institution/research_centers/index') ?>";
+
+        });
+    });
+</script>
+
 </body>
 
 <?= $this->endSection() ?>
