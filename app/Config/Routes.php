@@ -54,7 +54,10 @@ $routes->get('institution/search', 'InstitutionController::search');
 
 //Institution Projects//
 $routes->get('/institution/projects/index', 'ProjectsController::projects');
+$routes->get('/institution/projects', 'ProjectsController::projects');
 $routes->get('/institution/projects/print', 'ProjectsController::printProjects');
+$routes->get('/institution/projects/printprojects', 'ProjectsController::printProjects');
+
 $routes->get('/institution/projects/create', 'ProjectsController::create');
 $routes->post('/institution/projects/store', 'ProjectsController::storeProjects');
 $routes->get('/institution/projects/edit/(:num)', 'ProjectsController::edit/$1');

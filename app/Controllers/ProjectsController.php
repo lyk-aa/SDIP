@@ -274,10 +274,32 @@ class ProjectsController extends BaseController
             'projects' => $formattedProjects
         ]);
     }
-
-    // Print Projects
     public function printProjects()
-    {
-        return view('institution/projects/print_projects');
-    }
+{
+    $db = \Config\Database::connect();
+    $builder = $db->table('research_projects rp');
+
+    // Select all columns from research_projects + stakeholder name
+    $builder->select('
+        rp.id as project_id, 
+        rp.*, 
+        s.name as stakeholder_name
+    ');
+
+    $builder->join('institutions i', 'i.id = rp.institution_id', 'left');
+    $builder->join('stakeholders s', 's.id = i.stakeholder_id', 'left');
+    $builder->whereIn('rp.status', ['active', 'ongoing', 'completed', 'pending']); // Include all statuses
+    $builder->orderBy('rp.name', 'ASC');
+
+    $results = $builder->get()->getResult();
+
+    // Since the project_objectives table doesn't exist, we'll skip fetching objectives
+
+    // Always load the view; handle empty state in the view
+    return view('institution/projects/print_projects', [
+        'projectDetails' => $results,
+        // No need for objectives array since the table doesn't exist
+        'objectives' => []
+    ]);
+}
 }

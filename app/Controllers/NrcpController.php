@@ -278,9 +278,36 @@ class NrcpController extends BaseController
         return view('institution/nrcp_members/index', $data);
     }
 
-    // Print NRCP
     public function printNrcp()
-    {
-        return view('institution/nrcp_members/print_nrcp_members');
-    }
+{
+    $db = \Config\Database::connect();
+    $builder = $db->table('nrcp_members nm');
+
+    $builder->select('
+        nm.id,
+        nm.name as engagement_name,
+        nm.description,
+        nm.image,
+        p.first_name,
+        p.middle_name,
+        p.last_name,
+        p.designation,
+        p.role,
+        s.name as institution_name
+    ');
+
+    // JOIN with persons table
+    $builder->join('persons p', 'p.id = nm.person_id', 'left');
+
+    // JOIN with institutions and stakeholders to get institution name
+    $builder->join('institutions i', 'i.id = nm.institution_id', 'left');
+    $builder->join('stakeholders s', 's.id = i.stakeholder_id', 'left');
+
+    // Fetch result
+    $results = $builder->get()->getResult();
+
+    return view('institution/nrcp_members/print_nrcp_members', [
+        'nrcpMembersDetails' => $results
+    ]);
+}
 }

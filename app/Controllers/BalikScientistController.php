@@ -290,9 +290,36 @@ class BalikScientistController extends BaseController
         return view('institution/balik_scientist/index', $data);
     }
 
-    // Print Balik Scientist
     public function printBalikScientist()
-    {
-        return view('institution/balik_scientist/print_balik_scientist');
-    }
+{
+    $db = \Config\Database::connect();
+    $builder = $db->table('balik_scientist_engaged bs');
+
+    $builder->select('
+        bs.id,
+        bs.name as engagement_name,
+        bs.description,
+        bs.image,
+        p.first_name,
+        p.middle_name,
+        p.last_name,
+        p.designation,
+        p.role,
+        s.name as institution_name
+    ');
+
+    // JOIN with persons table
+    $builder->join('persons p', 'p.id = bs.person_id', 'left');
+
+    // JOIN with institutions and stakeholders to get institution name
+    $builder->join('institutions i', 'i.id = bs.institution_id', 'left');
+    $builder->join('stakeholders s', 's.id = i.stakeholder_id', 'left');
+
+    // Fetch result
+    $results = $builder->get()->getResult();
+
+    return view('institution/balik_scientist/print_balik_scientist', [
+        'balikScientistDetails' => $results
+    ]);
+}
 }

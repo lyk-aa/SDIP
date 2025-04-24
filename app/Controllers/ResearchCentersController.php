@@ -1,5 +1,3 @@
-<?php
-
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
@@ -7,6 +5,7 @@ use Config\Database;
 
 class ResearchCentersController extends BaseController
 {
+    // Display list of research centers
     public function index()
     {
         $db = Database::connect();
@@ -20,6 +19,7 @@ class ResearchCentersController extends BaseController
         return view('institution/research_centers/index', $data);
     }
 
+    // Show the form for creating a new research center
     public function create()
     {
         $db = Database::connect();
@@ -32,10 +32,12 @@ class ResearchCentersController extends BaseController
 
         return view('institution/research_centers/create', $data);
     }
+
+    // Store the newly created research center
     public function store()
     {
         helper(['form']);
-    
+
         $validationRules = [
             'institution' => 'required|integer',
             'name'        => 'required|string|max_length[255]',
@@ -43,14 +45,14 @@ class ResearchCentersController extends BaseController
             'longitude'   => 'permit_empty|decimal',
             'latitude'    => 'permit_empty|decimal',
         ];
-    
+
         if (!$this->validate($validationRules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
-    
+
         $db = Database::connect();
         $timestamp = date('Y-m-d H:i:s');
-    
+
         $data = [
             'institution_id' => $this->request->getPost('institution'),
             'name'           => $this->request->getPost('name'),
@@ -60,13 +62,14 @@ class ResearchCentersController extends BaseController
             'created_at'     => $timestamp,
             'updated_at'     => $timestamp
         ];
-    
+
         $db->table('rd_innovation_centers')->insert($data);
-    
+
         return redirect()->to('/institution/research_centers/index')
             ->with('success', 'Research Center added successfully!');
     }
-    
+
+    // Show the form for editing a research center
     public function edit($id)
     {
         $db = Database::connect();
@@ -90,6 +93,42 @@ class ResearchCentersController extends BaseController
         ]);
     }
 
+    // Update the research center
+    public function update($id)
+    {
+        helper(['form']);
+
+        $validationRules = [
+            'institution' => 'required|integer',
+            'name'        => 'required|string|max_length[255]',
+            'description' => 'required|string',
+            'longitude'   => 'permit_empty|decimal',
+            'latitude'    => 'permit_empty|decimal',
+        ];
+
+        if (!$this->validate($validationRules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = Database::connect();
+        $timestamp = date('Y-m-d H:i:s');
+
+        $data = [
+            'institution_id' => $this->request->getPost('institution'),
+            'name'           => $this->request->getPost('name'),
+            'description'    => $this->request->getPost('description'),
+            'longitude'      => $this->request->getPost('longitude'),
+            'latitude'       => $this->request->getPost('latitude'),
+            'updated_at'     => $timestamp
+        ];
+
+        $db->table('rd_innovation_centers')->where('id', $id)->update($data);
+
+        return redirect()->to('/institution/research_centers/index')
+            ->with('success', 'Research Center updated successfully!');
+    }
+
+    // Delete a research center
     public function delete($id)
     {
         $db = Database::connect();
@@ -99,6 +138,7 @@ class ResearchCentersController extends BaseController
             ->with('success', 'Research Center deleted successfully!');
     }
 
+    // Search for research centers
     public function search()
     {
         $searchTerm = $this->request->getVar('query');
