@@ -19,6 +19,8 @@ class StakeholderModel extends Model
         'barangay',
         'country',
         'postal_code',
+        'classification',
+        'source_agency',
         'created_at',
         'updated_at'
     ];

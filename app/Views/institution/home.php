@@ -196,43 +196,49 @@
 <div class="modal" id="create-modal">
     <div class="modal-background" onclick="closeCreateModal()"></div>
     <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Add New</p>
-            <button class="delete" aria-label="close" onclick="closeCreateModal()"></button>
-        </header>
-        <section class="modal-card-body">
-            <div class="field">
-                <label class="label">Select Institution</label>
-                <div class="control">
-                    <div class="select is-fullwidth">
-                        <select id="create-title">
-                            <option value="">Select an Institution</option>
-                            <?php foreach ($stakeholders as $stakeholder): ?>
-                                <?php if ($stakeholder['category'] === 'Academe'): ?>
-                                    <option value="<?= $stakeholder['id'] ?>">
-                                        <?= esc($stakeholder['name']) ?>
-                                    </option>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </select>
+        <form action="<?= base_url('/institution/home/store') ?>" method="post" enctype="multipart/form-data">
+            <?= csrf_field() ?>
+            <header class="modal-card-head">
+                <p class="modal-card-title">Add New</p>
+                <button class="delete" aria-label="close" type="button" onclick="closeCreateModal()"></button>
+            </header>
+
+            <section class="modal-card-body">
+                <div class="field">
+                    <label class="label">Select Institution</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select name="title" required>
+                                <option value="">Select an Institution</option>
+                                <?php foreach ($stakeholders as $stakeholder): ?>
+                                    <?php if ($stakeholder['category'] === 'Academe'): ?>
+                                        <option value="<?= $stakeholder['id'] ?>"><?= esc($stakeholder['name']) ?></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="field">
-                <label class="label">Upload Image</label>
-                <input type="file" accept="image/*" id="create-image-input">
-            </div>
-            <div class="field">
-                <label class="label">Description</label>
-                <textarea class="textarea" id="create-description"></textarea>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="createNewCard()">Save</button>
-            <button class="button" onclick="closeCreateModal()">Cancel</button>
-        </footer>
+
+                <div class="field">
+                    <label class="label">Upload Image</label>
+                    <input type="file" name="image" accept="image/*" required>
+                </div>
+
+                <div class="field">
+                    <label class="label">Description</label>
+                    <textarea class="textarea" name="description" required></textarea>
+                </div>
+            </section>
+
+            <footer class="modal-card-foot">
+                <button class="button is-success" type="submit">Save</button>
+                <button class="button" type="button" onclick="closeCreateModal()">Cancel</button>
+            </footer>
+        </form>
     </div>
 </div>
+
 
 
 <script>

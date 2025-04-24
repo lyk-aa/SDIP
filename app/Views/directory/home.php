@@ -2,97 +2,113 @@
 
 <?= $this->section('content') ?>
 
-
-<section class="section">
-    <!-- 
-    category -->
-    <!-- <div class="field">
-        <label class="label">Select Category</label>
-        <div class="control">
-            <div class="select">
-                <select id="categoryDropdown" onchange="navigateToCategory()">
-                    <option value="<?= base_url('directory/home') ?>">All</option>
-                    <option value="<?= base_url('directory/regional_offices') ?>">Regional Offices</option>
-                    <option value="<?= base_url('directory/nga') ?>">NGA</option>
-                    <option value="<?= base_url('directory/academes') ?>">Academes</option>
-                    <option value="<?= base_url('directory/lgus') ?>">LGUs</option>
-                    <option value="<?= base_url('directory/sucs') ?>">SUCs</option>
-                    <option value="<?= base_url('directory/business_sector') ?>">Business Sector</option>
-                </select>
-            </div>
-        </div>
-    </div> -->
-
+<section class="section mt-1">
     <div class="container">
-        <table id="example" class="table is-striped is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>Abbreviation</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Address</th>
-                    <th>Head of Office</th>
-                    <th>Designation</th>
-                    <th>Contact Person</th>
-                    <th>Contact Number</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($stakeholders as $stakeholder): ?>
+
+        <div class="box">
+            <div class=" is-flex is-justify-content-space-between is-align-items-center mb-3">
+                <h3 class="title is-4 mb-0">Stakeholders</h3>
+                <a href="<?= site_url('directory/home/export') ?>" class="button is-link is-outlined">
+                    <span class="icon">
+                        <i class="fas fa-file-excel"></i>
+                    </span>
+                    <span>Export to Excel</span>
+                </a>
+            </div>
+            <div id="main" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <div class="table-container">
+            <h3 class="title is-4">Recently Added Stakeholders</h3>
+            <table id="recentTable" class="table is-striped is-hoverable is-fullwidth is-bordered">
+                <thead class="has-background-link-light has-text-white">
                     <tr>
-                        <td><?= esc($stakeholder['abbreviation']) ?></td>
-                        <td><?= esc($stakeholder['name']) ?></td>
-                        <td><?= esc($stakeholder['category']) ?></td>
-                        <td>
-                            <?= esc(
-                                trim(
-                                    implode(', ', array_filter([
-                                        $stakeholder['street'],
-                                        $stakeholder['barangay'],
-                                        $stakeholder['municipality'],
-                                        $stakeholder['province'],
-                                        $stakeholder['country'],
-                                        $stakeholder['postal_code']
-                                    ]))
-                                )
-                            ) ?>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                            <button class="button is-small is-info">Edit</button>
-                            <button class="button is-small is-danger">Delete</button>
-                        </td>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Address</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php foreach ($recentStakeholders as $stakeholder): ?>
+                        <tr>
+                            <td><?= esc($stakeholder['name']) ?></td>
+                            <td><?= esc($stakeholder['category']) ?></td>
+                            <td><?= esc($stakeholder['address']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </section>
 
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bulma/js/bulma.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bulma-datatables@2.1.1/dist/js/bulma-datatables.min.js"></script>
+
 <script>
-    $(document).ready(function () {
-        $('#example').DataTable({
-            "pageLength": 10,
-            "lengthChange": false,
-            "ordering": true,
-            "paging": true
+    document.addEventListener('DOMContentLoaded', () => {
+        bulmaDataTable.attach('#recentTable', {
+            perPage: 10,
+            perPageSelect: false,
+            sortable: true
         });
     });
 </script>
-<script>
-    function navigateToCategory() {
-        var categoryUrl = document.getElementById("categoryDropdown").value;
-        if (categoryUrl) {
-            window.location.href = categoryUrl;
-        }
+
+<style>
+    .box {
+        margin-top: 4px;
+
     }
+</style>
+
+<!-- ECharts Pie Chart -->
+<script>
+    var chartDom = document.getElementById('main');
+    var myChart = echarts.init(chartDom);
+
+    var option = {
+        title: {
+            text: 'Stakeholder Category Breakdown',
+            left: 'center'
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left'
+        },
+        series: [{
+            name: 'Categories',
+            type: 'pie',
+            radius: '70%',
+            label: {
+                show: true,
+                position: 'inside',
+                formatter: '{c}',
+                fontSize: 14
+            },
+            data: [
+                <?php foreach ($stakeholderCategories as $category): ?>
+                                                                                                                                                                                                                                                                                                        { value: <?= $category['count'] ?>, name: '<?= esc($category['category']) ?>' },
+                <?php endforeach; ?>
+            ],
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }]
+    };
+
+    myChart.setOption(option);
 </script>
-
-
 <?= $this->endSection() ?>

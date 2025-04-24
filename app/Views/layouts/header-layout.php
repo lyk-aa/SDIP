@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/style.css">
 
     <!-- /* Style for the map container */ -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -40,7 +40,7 @@
 <body>
 
     <!-- Header Section -->
-    <header class="navbar is-light">
+    <!-- <header class="navbar is-light">
         <div class="container">
             <div class="navbar-brand">
                 <a class="navbar-item" href="#">
@@ -51,9 +51,9 @@
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                 </a>
-            </div>
-            <!-- Adjusted Navbar Icons -->
-            <div id="navbarMenu" class="navbar-menu">
+            </div> -->
+    <!-- Adjusted Navbar Icons -->
+    <!-- <div id="navbarMenu" class="navbar-menu">
                 <div class="navbar-end">
                     <a href="#" class="navbar-item">
                         <span class="icon icon-circle">
@@ -68,7 +68,7 @@
                 </div>
             </div>
         </div>
-    </header>
+    </header> -->
 
     <!-- Button and Search Section -->
     <section class="section">
@@ -81,7 +81,7 @@
                 </ul>
             </nav>
         </div>
-        <div class="container">
+        <!-- <div class="container">
             <div class="button-container">
                 <button class="custom-button">+ Create New</button>
                 <button class="custom-button">+ Add New</button>
@@ -90,7 +90,7 @@
                     <i class="fas fa-search"></i>
                 </button>
             </div>
-        </div>
+        </div> -->
     </section>
 
     <main>

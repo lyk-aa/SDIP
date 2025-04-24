@@ -10,7 +10,12 @@ class Home extends BaseController
     }
     public function home(): string
     {
-        return view('home');
+        $db = \Config\Database::connect();
+        $builder = $db->table('rd_innovation_centers');
+        $query = $builder->select('name, latitude, longitude')->get();
+        $centers = $query->getResult();
+
+        return view('home', ['centers' => $centers]);
     }
 
 
