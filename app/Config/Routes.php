@@ -103,6 +103,7 @@ $routes->get('institution/consortium/search', 'ConsortiumController::search');
 
 //Institutions Research Centers
 $routes->get('institution/research_centers/index', 'ResearchCentersController::index');
+$routes->get('institution/research_centers/print', 'ResearchCentersController::printResearchCenters');
 $routes->get('/institution/research_centers/create', 'ResearchCentersController::create');
 $routes->post('/institution/research_centers/store', 'ResearchCentersController::store');
 $routes->get('/institution/research_centers/edit/(:num)', 'ResearchCentersController::edit/$1');

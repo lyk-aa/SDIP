@@ -313,6 +313,12 @@ class InstitutionController extends BaseController
             ->where('rp.status', 'Ongoing')
             ->get()
             ->getResultArray();
+        
+        $research_centers = $db->table('rd_innovation_centers')
+            ->select('id, institution_id, name, description, longitude, latitude, created_at, updated_at')
+            ->where('institution_id', $id)
+            ->get()
+            ->getResultArray();
 
         // If the institution does not exist, return an error
         if (!$institution) {
@@ -441,10 +447,18 @@ class InstitutionController extends BaseController
                 ->where('rp.status', 'Ongoing')
                 ->get()
                 ->getResultArray();
+            
+            // Research Centers
+            $research_centers = $db->table('rd_innovation_centers')
+                ->select('id, institution_id, name, description, longitude, latitude, created_at, updated_at')
+                ->where('institution_id', $id)
+                ->get()
+                ->getResultArray();
     
             $allInstitutionDetails[] = [
                 'institution' => $institution,
                 'consortiums' => $consortiums,
+                'research_centers' => $research_centers,
                 'balik_scientists' => $balik_scientists,
                 'nrcp_members' => $nrcp_members,
                 'completed_research_projects' => $completed_research_projects,
@@ -457,24 +471,6 @@ class InstitutionController extends BaseController
         ]);
     }
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function printDetails($id) 
 {   
     $db = \Config\Database::connect();
@@ -520,6 +516,13 @@ class InstitutionController extends BaseController
         ->select('sector, name as title, project_objectives, duration, project_leader, approved_amount')
         ->where('institution_id', $id)
         ->where('status', 'Completed')
+        ->get()
+        ->getResultArray();
+
+    // Research Centers
+    $research_centers = $db->table('rd_innovation_centers')
+        ->select('id, institution_id, name, description, longitude, latitude, created_at, updated_at')
+        ->where('institution_id', $id)
         ->get()
         ->getResultArray();
 

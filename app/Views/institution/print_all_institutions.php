@@ -22,8 +22,9 @@
             font-size: 16px;
             font-weight: bold;
             color: #000;
-            margin-top: 0;
+            margin-top: 40;
             margin-bottom: 10px;
+
         }
 
         h3 {
@@ -33,6 +34,7 @@
             padding: 6px 10px;
             margin-top: 30px;
             font-size: 14px;
+            color: #000;
         }
 
         .institution-header {
@@ -122,6 +124,18 @@
             </ul>
         <?php else: ?>
             <p>No consortium memberships.</p>
+        <?php endif; ?>
+
+        <!-- Research Centers -->
+        <h3>Research Centers</h3>
+        <?php if (!empty($details['research_centers'])): ?>
+            <ul>
+                <?php foreach ($details['research_centers'] as $center): ?>
+                    <li><?= esc($center['name']) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>No Research Centers.</p>
         <?php endif; ?>
 
         <!-- Balik Scientist(s) -->

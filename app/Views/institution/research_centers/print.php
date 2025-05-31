@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Consortium Details</title>
+    <title>Print Research Centers</title>
     <style>
         @media print {
             #printButton, #downloadButton {
@@ -56,35 +56,32 @@
 </head>
 <body>
 
-<h1>Consortium Details</h1>
+<h1>Research Center Details</h1>
 
-<table id="consortiumTable">
+<table id="researchCentersTable">
     <thead>
         <tr>
-            <th>Consortium</th>
+            <th>Research Center</th>
             <th>Institution</th>
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($consortiumDetails)): ?>
-            <?php foreach ($consortiumDetails as $consortium): ?>
-                <?php foreach ($consortium['institutions'] as $institution): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($consortium['consortium_name']) ?></td>
-                        <td><?= htmlspecialchars($institution) ?></td>
-                    </tr>
-                <?php endforeach; ?>
+        <?php if (!empty($researchCenters)): ?>
+            <?php foreach ($researchCenters as $center): ?>
+                <tr>
+                    <td><?= htmlspecialchars($center->center_name) ?></td>
+                    <td><?= htmlspecialchars($center->institution_name) ?></td>
+                </tr>
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="2">No Consortium Data Available.</td>
+                <td colspan="2">No Research Centers found.</td>
             </tr>
         <?php endif; ?>
     </tbody>
 </table>
 
 <div class="has-text-centered">
-    <button id="printButton" onclick="window.print()">Print</button>
     <button id="downloadButton" onclick="downloadPDF()">Download as PDF</button>
 </div>
 
@@ -96,27 +93,27 @@
 
         // Title
         doc.setFontSize(18);
-        doc.text('Consortium Details', 14, 20);
+        doc.text('Research Center Details', 14, 20);
 
         // Table header
         doc.setFontSize(12);
-        doc.text('Consortium', 14, 30);
+        doc.text('Research Center', 14, 30);
         doc.text('Institution', 100, 30);
 
-        // Loop through the table rows dynamically
+        // Table rows
         let y = 40;
-        const table = document.getElementById("consortiumTable").getElementsByTagName('tbody')[0];
+        const table = document.getElementById("researchCentersTable").getElementsByTagName('tbody')[0];
         for (let i = 0; i < table.rows.length; i++) {
             let row = table.rows[i];
-            let consortiumName = row.cells[0].innerText;
+            let centerName = row.cells[0].innerText;
             let institutionName = row.cells[1].innerText;
-            doc.text(consortiumName, 14, y);
+            doc.text(centerName, 14, y);
             doc.text(institutionName, 100, y);
             y += 10;
         }
 
         // Save the PDF
-        doc.save('consortium_details.pdf');
+        doc.save('research_centers.pdf');
     }
 </script>
 

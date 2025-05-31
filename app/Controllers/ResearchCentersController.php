@@ -142,4 +142,43 @@ public function delete($id)
     // Redirect to the research centers list with a success message
     return redirect()->to('/institution/research_centers/index')->with('centers-success', 'Research Center deleted successfully!');
 }
+
+public function printResearchCenters()
+{
+    $db = \Config\Database::connect();
+    $builder = $db->table('institutions');
+
+    $builder->select('
+        institutions.id, institutions.image, institutions.type, 
+        stakeholders.name, stakeholders.abbreviation, 
+        stakeholders.street, stakeholders.barangay, 
+        stakeholders.municipality, stakeholders.province
+    ');
+    $builder->join('stakeholders', 'stakeholders.id = institutions.stakeholder_id');
+    $builder->where('institutions.status', 'active');
+    $builder->orderBy('stakeholders.name', 'ASC');
+
+    $data['institutions'] = $builder->get()->getResultArray();
+    $allInstitutionDetails = [];
+
+    foreach ($data['institutions'] as $all_institutions) {
+        $id = $all_institutions['id'];
+
+        $research_centers = $db->table('rd_innovation_centers rc')
+            ->select('rc.id, rc.name, rc.description, rc.longitude, rc.latitude, rc.created_at, rc.updated_at, i.id as institution_id, s.name as institution_name')
+            ->join('institutions i', 'i.id = rc.institution_id', 'left')
+            ->join('stakeholders s', 's.id = i.stakeholder_id', 'left') // if you want the stakeholder/institution name
+            ->where('rc.institution_id', $id)
+            ->get()
+            ->getResultArray();
+
+        $allInstitutionDetails[] = [
+            'research_centers' => $research_centers,
+        ];
+    }
+
+    return view('institution/research_centers/print_research_centers', [
+        'allInstitutionDetails' => $allInstitutionDetails
+    ]);
+}
 }

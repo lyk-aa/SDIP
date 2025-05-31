@@ -71,6 +71,19 @@
       <?php endforeach; ?>
     </ul>
 
+     <!-- Research Centers -->
+<div class="section-title">Research Centers</div>
+<?php if (!empty($details['research_centers'])): ?>
+    <ul class="ml-4 mt-2">
+        <?php foreach ($details['research_centers'] as $center): ?>
+            <li><?= esc($center['name']) ?></li>
+        <?php endforeach; ?>
+    </ul>
+<?php else: ?>
+    <p class="ml-4 mt-2">No Research Centers.</p>
+<?php endif; ?>
+
+
     <!-- Balik Scientist Engaged -->
     <div class="section-title">Balik Scientist Engaged</div>
     <ul class="ml-4 mt-2">
